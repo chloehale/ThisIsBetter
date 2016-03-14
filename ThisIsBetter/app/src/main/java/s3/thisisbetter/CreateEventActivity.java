@@ -22,5 +22,14 @@ public class CreateEventActivity extends AppCompatActivity {
             }
         });
 
+        Button cancelButton = (Button) findViewById(R.id.cancel_button);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close the activity
+                finish();
+            }
+        });
+
     }
 }
