@@ -27,7 +27,11 @@
         <activity
             android:name=".TabbedEventActivity"
             android:label="@string/title_activity_tabbed_event"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".CreateEventActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".AvailabilityInputActivity"></activity>
     </application>
 
 </manifest>
