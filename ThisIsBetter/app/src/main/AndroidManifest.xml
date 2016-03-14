@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application android:name=".ThisIsBetterApplication"
+    <application
+        android:name=".ThisIsBetterApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -23,6 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".TabbedEventActivity"
+            android:label="@string/title_activity_tabbed_event"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>
