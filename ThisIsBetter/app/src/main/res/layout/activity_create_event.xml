@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="s3.thisisbetter.CreateEventActivity">
 
     <android.support.v7.widget.Toolbar
@@ -13,12 +13,15 @@
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
+        android:paddingRight="@dimen/activity_vertical_margin"
+        android:paddingLeft="@dimen/activity_vertical_margin"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         >
         <Button
             android:id="@+id/cancel_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
             android:text="@string/cancel_button"
             android:textColor="#fff"
             android:background="@null"
@@ -27,11 +30,54 @@
             android:id="@+id/next_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:minWidth="0dp"
             android:text="@string/next_button"
             android:layout_gravity="right"
             android:textColor="#fff"
             android:background="@null"
             />
         </android.support.v7.widget.Toolbar>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:color="#ffffff"
+        android:weightSum="1">
 
-</RelativeLayout>
+        <EditText
+            android:id="@+id/event_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/prompt_event_title"
+            android:inputType="text"
+            android:maxLines="1"
+            android:singleLine="true" />
+
+        <TextView
+            android:id="@+id/txtview"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:paddingBottom="0dp"
+            android:layout_alignLeft="@+id/textview"
+            android:layout_alignParentBottom="true"
+            android:text="@string/calendar_instructions" />
+
+
+        <com.prolificinteractive.materialcalendarview.MaterialCalendarView
+            android:id="@+id/calendarView"
+            android:layout_width="match_parent"
+            android:layout_height="344dp"
+            android:padding="@dimen/activity_vertical_margin"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            app:mcv_showOtherDates="none"
+            app:mcv_selectionColor="@color/colorPrimary"
+            app:mcv_tileSize="42dp"
+            android:elevation="10dp"
+            android:background="@drawable/rect"
+            android:layout_weight="0.23" />
+
+    </LinearLayout>
+
+</LinearLayout>

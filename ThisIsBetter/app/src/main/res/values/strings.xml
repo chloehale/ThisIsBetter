@@ -20,5 +20,7 @@
     <string name="next_button">NEXT</string>
     <string name="cancel_button">CANCEL</string>
     <string name="save_button">SAVE</string>
+    <string name="prompt_event_title">Event Title</string>
+    <string name="calendar_instructions">Tap the potential dates for your event</string>
 
 </resources>
