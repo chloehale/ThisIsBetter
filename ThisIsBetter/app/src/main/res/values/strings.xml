@@ -115,5 +115,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_scrolling">ScrollingActivity</string>
     <string name="Invite_Text">Invite Others to\n\"Aquarium Trip\"</string>
+    <string name="FinishButtonMessage">You can always change this later.</string>
+    <string name="FinishButtonLabel">FINISH</string>
 
 </resources>

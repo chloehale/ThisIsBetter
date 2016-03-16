@@ -42,6 +42,7 @@
         xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:id="@+id/context1"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -58,27 +59,7 @@
             android:layout_centerHorizontal="true"
             android:layout_marginTop="32dp" />
 
-        <Button
-            android:layout_width="180dp"
-            android:layout_height="40dp"
-            android:text="FINISH"
-            android:textSize="18sp"
-            android:id="@+id/button"
-            android:layout_marginBottom="129dp"
-            android:background="?attr/colorPrimary"
-            android:textColor="#FFFFFF"
-            android:elevation="20dp"
-            android:layout_alignBottom="@+id/listView"
-            android:layout_centerHorizontal="true" />
 
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:layout_above="@+id/button"
-            android:textSize="14sp"
-            android:layout_centerHorizontal="true"
-            android:text="You can always change this later." />
 
 
     </RelativeLayout>
@@ -94,7 +75,34 @@
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="bottom|start" />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/editText"
+        android:textSize="14sp"
+        android:text="@string/FinishButtonMessage"
+        app:layout_anchor="@id/context1"
+        app:layout_anchorGravity="bottom|center"
+        android:layout_alignTop="@+id/button"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="65dp" />
 
+    <Button
+        android:layout_width="180dp"
+        android:layout_height="40dp"
+        android:text="@string/FinishButtonLabel"
+        android:textSize="18sp"
+        android:id="@+id/button"
+        android:background="?attr/colorPrimary"
+        android:textColor="#FFFFFF"
+        android:elevation="10dp"
+        app:layout_anchor="@id/context1"
+        app:layout_anchorGravity="bottom|center"
+        android:layout_marginLeft="@dimen/fab_margin"
+        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
 
 </android.support.design.widget.CoordinatorLayout>
