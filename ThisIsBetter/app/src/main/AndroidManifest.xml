@@ -33,6 +33,11 @@
         <activity
             android:name=".AvailabilityInputActivity"
             android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".InviteActivity"
+            android:label="@string/title_activity_invite"
+            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar" />
     </application>
 
 </manifest>
