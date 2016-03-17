@@ -18,6 +18,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/cancel_button"
+            android:minWidth="0dp"
             android:textColor="#fff"
             android:background="@null"
             />
@@ -26,6 +27,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/save_button"
+            android:minWidth="0dp"
+            android:paddingRight="@dimen/activity_vertical_margin"
             android:layout_gravity="right"
             android:textColor="#fff"
             android:background="@null"
