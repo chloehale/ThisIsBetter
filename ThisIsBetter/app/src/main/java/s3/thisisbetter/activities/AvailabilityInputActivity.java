@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.activities;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -15,18 +15,20 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.TabHost;
 import android.widget.TextView;
-
-import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
 import com.firebase.client.Firebase;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
+
+import s3.thisisbetter.AppConstants;
+import s3.thisisbetter.fragments.AvailabilityInputFragment;
+import s3.thisisbetter.R;
+import s3.thisisbetter.model.DB;
+import s3.thisisbetter.model.Event;
 
 public class AvailabilityInputActivity extends AppCompatActivity {
 

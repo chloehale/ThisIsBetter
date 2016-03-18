@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.adapters;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -9,6 +9,9 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+
+import s3.thisisbetter.R;
+import s3.thisisbetter.model.Event;
 
 /**
  * Created by Chloe on 3/17/16.

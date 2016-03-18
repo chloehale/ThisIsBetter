@@ -16,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:label="Log In"
             android:noHistory="true">
             <intent-filter>
@@ -26,16 +26,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".TabbedEventActivity"
+            android:name=".activities.TabbedEventActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".CreateEventActivity"
+            android:name=".activities.CreateEventActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".AvailabilityInputActivity"
+            android:name=".activities.AvailabilityInputActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".InviteActivity"
+            android:name=".activities.InviteActivity"
             android:label="@string/title_activity_invite"
             android:windowSoftInputMode="stateHidden"
             android:theme="@style/AppTheme.NoActionBar" />

@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,11 +11,16 @@ import android.widget.ListView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
-import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 
 import java.util.ArrayList;
+
+import s3.thisisbetter.R;
+import s3.thisisbetter.activities.CreateEventActivity;
+import s3.thisisbetter.adapters.EventArrayAdapter;
+import s3.thisisbetter.model.DB;
+import s3.thisisbetter.model.Event;
 
 /**
  * The fragment for the Events I Own tab

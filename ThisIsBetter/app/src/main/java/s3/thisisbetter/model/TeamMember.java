@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.model;
 
 /**
  * Created by psoder3 on 3/17/16.

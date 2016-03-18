@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -18,6 +18,9 @@ import android.widget.EditText;
 import com.firebase.client.AuthData;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+
+import s3.thisisbetter.R;
+import s3.thisisbetter.model.DB;
 
 
 /**

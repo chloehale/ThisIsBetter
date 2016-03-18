@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
@@ -11,9 +11,9 @@ import java.util.Map;
 @JsonIgnoreProperties(ignoreUnknown = true)
 
 public class Event {
-    static final String TITLE_KEY = "title";
-    static final String OWNER_KEY = "ownerID";
-    static final String INVITED_KEY = "invitedHaveResponded";
+    public static final String TITLE_KEY = "title";
+    public static final String OWNER_KEY = "ownerID";
+    public static final String INVITED_KEY = "invitedHaveResponded";
 
     private String title;
     private String ownerID;

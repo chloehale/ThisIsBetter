@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.activities;
 
 import android.content.Intent;
 import android.os.Build;
@@ -18,6 +18,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import s3.thisisbetter.AppConstants;
+import s3.thisisbetter.R;
+import s3.thisisbetter.model.DB;
+import s3.thisisbetter.model.TimeBlock;
 
 public class CreateEventActivity extends AppCompatActivity {
 

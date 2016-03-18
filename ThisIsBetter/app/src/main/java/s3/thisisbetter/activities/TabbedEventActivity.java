@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.activities;
 
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,6 +10,10 @@ import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+
+import s3.thisisbetter.fragments.AvailabilityInputFragment;
+import s3.thisisbetter.fragments.EventsIOwnFragment;
+import s3.thisisbetter.R;
 
 public class TabbedEventActivity extends AppCompatActivity {
 

@@ -1,30 +1,26 @@
-package s3.thisisbetter;
+package s3.thisisbetter.adapters;
 
 import android.app.Activity;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.ArrayAdapter;
-import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.ArrayList;
+
+import s3.thisisbetter.R;
+import s3.thisisbetter.model.TeamMember;
 
 /**
  * Created by psoder3 on 3/17/16.
  */
-public class CustomInviteList extends ArrayAdapter<TeamMember> {
+public class InviteArrayAdapter extends ArrayAdapter<TeamMember> {
 
     private final Activity context;
     public final ArrayList<TeamMember> members;
-    public CustomInviteList(Activity context, ArrayList<TeamMember> members) {
+    public InviteArrayAdapter(Activity context, ArrayList<TeamMember> members) {
         super(context, R.layout.fragment_list_single);
         this.context = context;
         this.members = members;

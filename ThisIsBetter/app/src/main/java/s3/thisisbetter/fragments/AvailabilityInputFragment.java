@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,17 +7,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import s3.thisisbetter.R;
+
 /**
  * The fragment for the Invited tab
  */
-public class EventsInvitedFragment extends Fragment {
+public class AvailabilityInputFragment extends Fragment {
     /**
      * The fragment argument representing the section number for this
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
 
-    public EventsInvitedFragment() {
+    public AvailabilityInputFragment() {
     }
 
     /**

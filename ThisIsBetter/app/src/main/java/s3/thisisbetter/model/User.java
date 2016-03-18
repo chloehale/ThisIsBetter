@@ -1,4 +1,4 @@
-package s3.thisisbetter;
+package s3.thisisbetter.model;
 
 import java.util.HashMap;
 import java.util.Map;
