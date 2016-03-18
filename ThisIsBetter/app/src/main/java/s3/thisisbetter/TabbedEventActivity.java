@@ -84,7 +84,7 @@ public class TabbedEventActivity extends AppCompatActivity {
             if (position == 0) {
                 return EventsIOwnFragment.newInstance(position + 1);
             } else {
-                return EventsInvitedFragment.newInstance(position + 1);
+                return AvailabilityInputFragment.newInstance(position + 1);
             }
         }
 
