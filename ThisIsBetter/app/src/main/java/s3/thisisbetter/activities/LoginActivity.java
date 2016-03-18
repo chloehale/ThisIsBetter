@@ -16,11 +16,14 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.firebase.client.AuthData;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.ValueEventListener;
 
 import s3.thisisbetter.R;
 import s3.thisisbetter.model.DB;
+import s3.thisisbetter.model.User;
 
 
 /**
@@ -106,6 +109,24 @@ public class LoginActivity extends AppCompatActivity {
             ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
+                    String uid = DB.getUID();
+                    final Firebase userRef = DB.getUsersRef().child(uid);
+                    userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User u = dataSnapshot.getValue(User.class);
+                            if (u == null) { u = new User(); }
+                            Firebase ref = DB.getFirebaseRef();
+                            String email = (String) ref.getAuth().getProviderData().get("email");
+
+                            u.setEmail(email);
+                            userRef.setValue(u);
+                        }
+
+                        @Override
+                        public void onCancelled(FirebaseError firebaseError) {}
+                    });
+
                     // User is logged in, go to the home view
                     Intent intent = new Intent(LoginActivity.this, TabbedEventActivity.class);
                     startActivity(intent);

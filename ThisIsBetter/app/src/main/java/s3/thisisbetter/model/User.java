@@ -8,6 +8,7 @@ import java.util.Map;
  */
 public class User {
 
+    private String email;
     private Map<String, Boolean> eventsOwned;
     private Map<String, Boolean> eventsInvitedTo;
 
@@ -22,5 +23,13 @@ public class User {
 
     public Map<String, Boolean> getEventsInvitedTo() {
         return eventsInvitedTo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
     }
 }

@@ -8,6 +8,7 @@ public class AppConstants {
     // intent extra identifiers
     public final static String EXTRA_PARENT_TYPE = "s3.thisisbetter.PARENT_TYPE";
     public final static String EXTRA_EVENT_TITLE = "s3.thisisbetter.EVENT_TITLE";
-    public final static String EXTRA_DATES_ARRAY = "s3.thisisbetter.EXTRA_DATES_ARRAY";
+    public final static String EXTRA_DATES_ARRAY = "s3.thisisbetter.DATES_ARRAY";
+    public final static String EXTRA_EVENT_ID = "s3.thisisbetter.EVENT_ID";
 
 }

@@ -97,10 +97,11 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                 if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
                     // We just came from the "creating a new event" activity...so it's time to
                     // actually save the event!
-                    saveNewEvent();
+                    String eventID = saveNewEvent();
                     saveUserAvailability();
 
                     Intent intent = new Intent(AvailabilityInputActivity.this, InviteActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
                     startActivity(intent);
                 } else {
                     // TODO: this should be called when the user is responding to an invite
@@ -212,7 +213,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         }
     }
 
-    private void saveNewEvent() {
+    private String saveNewEvent() {
         Intent prevIntent = getIntent();
         String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
 
@@ -232,6 +233,8 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         Map<String, Object> addEventOwned = new HashMap<>();
         addEventOwned.put(newEventRef.getKey(), true);
         userRef.child("eventsOwned").updateChildren(addEventOwned);
+
+        return newEventRef.getKey();
     }
 
     private ArrayList<String> saveDates() {

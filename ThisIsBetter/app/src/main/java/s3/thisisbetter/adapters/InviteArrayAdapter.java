@@ -16,50 +16,28 @@ import s3.thisisbetter.model.TeamMember;
 /**
  * Created by psoder3 on 3/17/16.
  */
-public class InviteArrayAdapter extends ArrayAdapter<TeamMember> {
+public class InviteArrayAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
-    public final ArrayList<TeamMember> members;
-    public InviteArrayAdapter(Activity context, ArrayList<TeamMember> members) {
-        super(context, R.layout.fragment_list_single);
+    public final ArrayList<String> values;
+
+    public InviteArrayAdapter(Activity context, ArrayList<String> values) {
+        super(context, R.layout.fragment_list_single, values);
         this.context = context;
-        this.members = members;
+        this.values = values;
     }
+
     @Override
     public View getView(int position, View view, ViewGroup parent) {
 
         LayoutInflater inflater = context.getLayoutInflater();
         View rowView= inflater.inflate(R.layout.fragment_list_single, null, true);
         TextView txtTitle = (TextView) rowView.findViewById(R.id.txt);
-        txtTitle.setText(members.get(position).name);
-
-        //ImageView imageView = (ImageView) rowView.findViewById(R.id.imgView);
-        String urlStr = members.get(position).pictureURL;
-
-        /*
-        URL url = null;
-        try {
-            url = new URL(urlStr);
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        }
-        Bitmap bmp = null;
-        try {
-            bmp = BitmapFactory.decodeStream(url.openConnection().getInputStream());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        imageView.setImageBitmap(bmp);
-        */
-
-
-        WebView web = (WebView) rowView.findViewById(R.id.webView);
-        web.loadDataWithBaseURL(urlStr,
-                "<img src=\"" + urlStr + "\" width=\"100%\"/>", "text/html", "utf-8", null);
-
-
-        //imageView.setImageResource(new Integer(1));
+        txtTitle.setText(values.get(position));
         return rowView;
+    }
+
+    public void addEmail(String e) {
+        this.insert(e, this.getCount());
     }
 }
