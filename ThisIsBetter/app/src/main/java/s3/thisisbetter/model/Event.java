@@ -2,6 +2,7 @@ package s3.thisisbetter.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -50,9 +51,11 @@ public class Event {
         return proposedDateIDs;
     }
 
-    public void addProposedDateID(String id) {
-        // The true doesn't matter here. What matters is that the id is a key in the map.
-        proposedDateIDs.put(id, true);
+    public void addProposedDateIDs(ArrayList<String> ids) {
+        for (String id : ids) {
+            // The true doesn't matter here. What matters is that the id is a key in the map.
+            proposedDateIDs.put(id, true);
+        }
     }
 
     public void inviteByID(String id, boolean hasResponded) {

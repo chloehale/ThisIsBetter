@@ -18,8 +18,10 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.firebase.client.Firebase;
+import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Map;
@@ -29,6 +31,7 @@ import s3.thisisbetter.fragments.AvailabilityInputFragment;
 import s3.thisisbetter.R;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
+import s3.thisisbetter.model.TimeBlock;
 
 public class AvailabilityInputActivity extends AppCompatActivity {
 
@@ -54,19 +57,39 @@ public class AvailabilityInputActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimaryDark));
         }
+
         // Get the data out of the intent
         Intent intent = getIntent();
         parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
 
+        // Set up the buttons
+        setupBackButton();
+        setupSaveButton();
 
-        Button cancelButton = (Button) findViewById(R.id.cancel_button);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
+        // Set up the tabs
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getData();
+        setupViewPager();
+        setupTabs();
+    }
+
+    /**
+     * SETUP METHODS
+     */
+
+    private void setupBackButton() {
+        Button backButton = (Button) findViewById(R.id.back_button);
+        backButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 finish();
             }
         });
+    }
 
+    private void setupSaveButton() {
         Button nextButton = (Button) findViewById(R.id.next_button);
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,21 +109,21 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
             }
         });
+    }
 
-        getDummyData();
-
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-
+    private void setupViewPager() {
         viewPager = (ViewPager) findViewById(R.id.scroll_viewpager);
-        setupViewPager(viewPager);
+        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+        for (int i = 0; i < days.size(); i++) {
+            adapter.addFrag(AvailabilityInputFragment.newInstance(i), "");
+        }
+        viewPager.setAdapter(adapter);
+    }
 
+    private void setupTabs() {
         tabLayout = (TabLayout) findViewById(R.id.scroll_tabs);
         tabLayout.setupWithViewPager(viewPager);
-
         initializeDateTabs();
-
         tabLayout.setOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager) {
 
             @Override
@@ -123,7 +146,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                 day.setTextColor(Color.argb(FADED_ALPHA, 255, 255, 255));
             }
         });
-
     }
 
     public void initializeDateTabs() {
@@ -138,23 +160,11 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
         TextView month = (TextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.tab_month);
         month.setText(months.get(0));
-
     }
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        // Inflate the menu; this adds items to the action bar if it is present.
-//        getMenuInflater().inflate(R.menu.menu_tabbed_event, menu);
-//        return true;
-//    }
-
-    private void setupViewPager(ViewPager viewPager) {
-        ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        for (int i = 0; i < days.size(); i++) {
-            adapter.addFrag(AvailabilityInputFragment.newInstance(i), "");
-        }
-        viewPager.setAdapter(adapter);
-    }
+    /**
+     * ADAPTERS
+     */
 
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
@@ -186,66 +196,81 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
     }
 
-    private void getDummyData() {
-        days = new ArrayList<String>();
-        months = new ArrayList<String>();
+    /**
+     * HELPER METHODS
+     */
 
-        days.add("Tues 25");
-        months.add("September");
+    private void getData() {
+        days = new ArrayList<>();
+        months = new ArrayList<>();
+        ArrayList<TimeBlock> dates = getDates();
 
-        days.add("Wed 26");
-        months.add("September");
-
-        days.add("Thurs 27");
-        months.add("September");
-
-        days.add("Fri 28");
-        months.add("September");
-
-        days.add("Mon 1");
-        months.add("October");
-
-        days.add("Tues 2");
-        months.add("October");
-
-        days.add("Wed 3");
-        months.add("October");
-
-        days.add("Thurs 4");
-        months.add("October");
-
-        days.add("Mon 4");
-        months.add("November");
-
+        // Extract the Data we want to see in the tabs
+        for(TimeBlock date : dates) {
+            days.add(date.getShortDescription());
+            months.add(date.getMonthString());
+        }
     }
 
     private void saveNewEvent() {
         Intent prevIntent = getIntent();
         String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
-        ArrayList<String> proposedDateIDs = prevIntent.getStringArrayListExtra(AppConstants.EXTRA_PROPOSED_DATE_IDS);
 
         String uid = DB.getUID();
         Firebase userRef = DB.getUsersRef().child(uid);
         Firebase eventsRef = DB.getEventsRef();
 
+        // Create and save the event
         Event event = new Event(eventTitle, uid);
         event.inviteByID(uid, true);
-        for (String dateID : proposedDateIDs) {
-            event.addProposedDateID(dateID);
-        }
+        event.addProposedDateIDs(saveDates());
 
         Firebase newEventRef = eventsRef.push();
         newEventRef.setValue(event);
 
+        // Update the user so this event is in their eventsOwned data
         Map<String, Object> addEventOwned = new HashMap<>();
         addEventOwned.put(newEventRef.getKey(), true);
         userRef.child("eventsOwned").updateChildren(addEventOwned);
     }
 
-    private void saveUserAvailability() {
-        System.out.println("SAVING availability");
+    private ArrayList<String> saveDates() {
+        Firebase datesRef = DB.getDatesRef();
+        ArrayList<String> dateIDs = new ArrayList<>();
+        ArrayList<TimeBlock> dates = getDates();
 
-        // TODO
+        for (TimeBlock date : dates) {
+            Firebase newDateRef = datesRef.push();
+            newDateRef.setValue(date);
+            dateIDs.add(newDateRef.getKey());
+        }
+
+        return dateIDs;
+    }
+
+    private void saveUserAvailability() {
+        // TODO: this is the method that will be called if the user isn't coming from the CreateEventActivity (we don't need to create an event, only save their availability)
+    }
+
+    private ArrayList<TimeBlock> getDates() {
+        String uid = DB.getUID();
+        ArrayList<TimeBlock> dates = new ArrayList<>();
+
+        if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
+            // The user is coming from the CreateEventActivity. The dates are in the intent (not the database).
+            Intent prevIntent = getIntent();
+            ArrayList<CalendarDay> datesData = prevIntent.getParcelableArrayListExtra(AppConstants.EXTRA_DATES_ARRAY);
+
+            for(CalendarDay date : datesData) {
+                dates.add(new TimeBlock(date, uid));
+            }
+
+        } else {
+            // TODO: The user is responding to an event (not coming from the CreateEventActivity) load the dates from the database
+        }
+
+        Collections.sort(dates);
+        return dates;
     }
 
 }
