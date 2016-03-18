@@ -3,12 +3,19 @@ package s3.thisisbetter;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
+import android.widget.ListView;
+
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+
+import java.util.ArrayList;
 
 /**
  * The fragment for the Events I Own tab
@@ -19,9 +26,9 @@ public class EventsIOwnFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private EventArrayAdapter adapter;
 
-    public EventsIOwnFragment() {
-    }
+    public EventsIOwnFragment() {}
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -39,8 +46,8 @@ public class EventsIOwnFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events_i_own, container, false);
-        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-        textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+
+        setUpListView(rootView);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -53,4 +60,41 @@ public class EventsIOwnFragment extends Fragment {
 
         return rootView;
     }
+
+    private void setUpListView(View rootView) {
+        // Create the firebase query that grabs all of the events I own.
+        String uid = DB.getUID();
+        Query queryRef = DB.getEventsRef().orderByChild(Event.OWNER_KEY).equalTo(uid);
+        queryRef.addChildEventListener(firebaseListener);
+
+        // Set up the adapter
+        adapter = new EventArrayAdapter(rootView.getContext(), new ArrayList<Event>());
+        ListView listView = (ListView) rootView.findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
+    }
+
+    private ChildEventListener firebaseListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            Event e = dataSnapshot.getValue(Event.class);
+            adapter.addEvent(e);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            Event e = dataSnapshot.getValue(Event.class);
+            adapter.deleteEvent(e);
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {}
+    };
 }

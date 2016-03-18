@@ -4,13 +4,12 @@ import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
@@ -100,22 +99,17 @@ public class LoginActivity extends AppCompatActivity {
             // Show a progress spinner, and kick off a background task to
             // perform the user login attempt.
             showProgress(true);
-            Firebase ref = FirebaseDB.getFirebaseRef();
+            final Firebase ref = DB.getFirebaseRef();
             ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
-                    System.out.println("User ID: " + authData.getUid() + ", Provider: " + authData.getProvider());
-
-                    // User is logged in
+                    // User is logged in, go to the home view
                     Intent intent = new Intent(LoginActivity.this, TabbedEventActivity.class);
                     startActivity(intent);
-
-                    // TODO: Go on to home page
                 }
 
                 @Override
                 public void onAuthenticationError(FirebaseError firebaseError) {
-                    System.out.println("ERROR!");
                     showProgress(false);
 
                     if(firebaseError.getCode() == FirebaseError.INVALID_PASSWORD) {
@@ -126,6 +120,7 @@ public class LoginActivity extends AppCompatActivity {
                         mEmailView.requestFocus();
                     } else {
                         // TODO: There was some other error logging in. We'll have to deal with it later.
+                        Log.d("ERROR", "onAuthenticationError: unknown error occurred");
                         return;
                     }
                 }

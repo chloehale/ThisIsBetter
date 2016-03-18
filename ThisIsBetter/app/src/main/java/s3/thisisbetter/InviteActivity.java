@@ -87,13 +87,15 @@ public class InviteActivity extends AppCompatActivity {
         finishBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(InviteActivity.this, TabbedEventActivity.class);
-                startActivity(intent);
+                goToHomeScreen();
             }
         });
+    }
 
-
-
+    private void goToHomeScreen() {
+        Intent intent = new Intent(InviteActivity.this, TabbedEventActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP); // Removes other activities from the stack
+        startActivity(intent);
     }
 
     //METHOD WHICH WILL HANDLE DYNAMIC INSERTION

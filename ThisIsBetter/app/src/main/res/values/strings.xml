@@ -17,6 +17,7 @@
     <string name="title_activity_tabbed_event">TabbedEventActivity</string>
     <string name="action_settings">Settings</string>
     <string name="section_format">Hello World from section: %1$d</string>
+    <string name="back_button">BACK</string>
     <string name="next_button">NEXT</string>
     <string name="cancel_button">CANCEL</string>
     <string name="save_button">SAVE</string>

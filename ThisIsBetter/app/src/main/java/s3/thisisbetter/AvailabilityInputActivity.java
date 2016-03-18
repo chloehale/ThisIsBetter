@@ -20,9 +20,13 @@ import android.widget.TextView;
 
 import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 
+import com.firebase.client.Firebase;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 public class AvailabilityInputActivity extends AppCompatActivity {
 
@@ -34,6 +38,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     private ArrayList<String> months;
     private static int FADED_ALPHA = 180;
     private static int FULL_ALPHA = 255;
+    private String parentType;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +52,10 @@ public class AvailabilityInputActivity extends AppCompatActivity {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
             window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimaryDark));
         }
+        // Get the data out of the intent
+        Intent intent = getIntent();
+        parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
+
 
         Button cancelButton = (Button) findViewById(R.id.cancel_button);
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -60,8 +69,19 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AvailabilityInputActivity.this, InviteActivity.class);
-                startActivity(intent);
+                if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
+                    // We just came from the "creating a new event" activity...so it's time to
+                    // actually save the event!
+                    saveNewEvent();
+                    saveUserAvailability();
+
+                    Intent intent = new Intent(AvailabilityInputActivity.this, InviteActivity.class);
+                    startActivity(intent);
+                } else {
+                    // TODO: this should be called when the user is responding to an invite
+                    saveUserAvailability();
+                }
+
             }
         });
 
@@ -195,6 +215,35 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         days.add("Mon 4");
         months.add("November");
 
+    }
+
+    private void saveNewEvent() {
+        Intent prevIntent = getIntent();
+        String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
+        ArrayList<String> proposedDateIDs = prevIntent.getStringArrayListExtra(AppConstants.EXTRA_PROPOSED_DATE_IDS);
+
+        String uid = DB.getUID();
+        Firebase userRef = DB.getUsersRef().child(uid);
+        Firebase eventsRef = DB.getEventsRef();
+
+        Event event = new Event(eventTitle, uid);
+        event.inviteByID(uid, true);
+        for (String dateID : proposedDateIDs) {
+            event.addProposedDateID(dateID);
+        }
+
+        Firebase newEventRef = eventsRef.push();
+        newEventRef.setValue(event);
+
+        Map<String, Object> addEventOwned = new HashMap<>();
+        addEventOwned.put(newEventRef.getKey(), true);
+        userRef.child("eventsOwned").updateChildren(addEventOwned);
+    }
+
+    private void saveUserAvailability() {
+        System.out.println("SAVING availability");
+
+        // TODO
     }
 
 }
