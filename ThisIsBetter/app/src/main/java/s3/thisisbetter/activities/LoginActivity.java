@@ -109,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
             ref.authWithPassword(email, password, new Firebase.AuthResultHandler() {
                 @Override
                 public void onAuthenticated(AuthData authData) {
-                    String uid = DB.getUID();
+                    String uid = DB.getMyUID();
                     final Firebase userRef = DB.getUsersRef().child(uid);
                     userRef.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override

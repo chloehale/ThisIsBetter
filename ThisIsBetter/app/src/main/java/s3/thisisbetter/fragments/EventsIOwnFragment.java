@@ -68,7 +68,7 @@ public class EventsIOwnFragment extends Fragment {
 
     private void setUpListView(View rootView) {
         // Create the firebase query that grabs all of the events I own.
-        String uid = DB.getUID();
+        String uid = DB.getMyUID();
         Query queryRef = DB.getEventsRef().orderByChild(Event.OWNER_KEY).equalTo(uid);
         queryRef.addChildEventListener(eventListener);
 
@@ -82,12 +82,13 @@ public class EventsIOwnFragment extends Fragment {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             Event e = dataSnapshot.getValue(Event.class);
-            adapter.addEvent(e);
+            adapter.addEvent(e, dataSnapshot.getKey());
         }
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+            Event e = dataSnapshot.getValue(Event.class);
+            adapter.editEvent(e, dataSnapshot.getKey());
         }
 
         @Override
@@ -102,4 +103,5 @@ public class EventsIOwnFragment extends Fragment {
         @Override
         public void onCancelled(FirebaseError firebaseError) {}
     };
+
 }

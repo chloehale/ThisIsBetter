@@ -20,6 +20,7 @@ import s3.thisisbetter.R;
 import s3.thisisbetter.adapters.EventInvitedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
+import s3.thisisbetter.model.User;
 
 /**
  * The fragment for the Invited tab
@@ -59,8 +60,8 @@ public class EventsInvitedFragment extends Fragment {
 
     private void setUpListView(View rootView) {
         // Create the firebase query that grabs all of the events I own.
-        String uid = DB.getUID();
-        Query queryRef = DB.getEventsRef().orderByChild(Event.INVITED_KEY + "/" + uid).equalTo(false);
+        String uid = DB.getMyUID();
+        Query queryRef = DB.getEventsRef().orderByChild(Event.INVITED_KEY + "/" + uid);
         queryRef.addChildEventListener(eventListener);
 
         // Set up the adapter
@@ -73,9 +74,12 @@ public class EventsInvitedFragment extends Fragment {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final Event e = dataSnapshot.getValue(Event.class);
-
             String ownerID = e.getOwnerID();
-            Firebase ownerEmailRef = DB.getUsersRef().child(ownerID).child("email");
+
+            // The invited tab doesn't show any events you own
+            if(ownerID.equals(DB.getMyUID())) { return; }
+
+            Firebase ownerEmailRef = DB.getUsersRef().child(ownerID).child(User.EMAIL_KEY);
             ownerEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {

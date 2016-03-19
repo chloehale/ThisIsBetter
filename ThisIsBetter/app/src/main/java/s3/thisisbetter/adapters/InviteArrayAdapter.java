@@ -20,6 +20,7 @@ public class InviteArrayAdapter extends ArrayAdapter<String> {
 
     private final Activity context;
     public final ArrayList<String> values;
+    public String ownerEmail;
 
     public InviteArrayAdapter(Activity context, ArrayList<String> values) {
         super(context, R.layout.fragment_list_single, values);
@@ -38,6 +39,15 @@ public class InviteArrayAdapter extends ArrayAdapter<String> {
     }
 
     public void addEmail(String e) {
-        this.insert(e, this.getCount());
+        if(e.equals(ownerEmail)) {
+            String modified = e + " (You are the Owner)";
+            this.insert(modified, 0);
+        } else {
+            this.insert(e, this.getCount());
+        }
+    }
+
+    public void setOwnerEmail(String e) {
+        ownerEmail = e;
     }
 }

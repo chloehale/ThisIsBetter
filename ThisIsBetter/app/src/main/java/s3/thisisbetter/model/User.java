@@ -8,6 +8,8 @@ import java.util.Map;
  */
 public class User {
 
+    public static final String EMAIL_KEY = "email";
+
     private String email;
     private Map<String, Boolean> eventsOwned;
     private Map<String, Boolean> eventsInvitedTo;

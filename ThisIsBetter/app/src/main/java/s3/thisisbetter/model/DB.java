@@ -34,7 +34,7 @@ public class DB {
         return getFirebaseRef().child(DATES_KEY);
     }
 
-    public static String getUID() {
+    public static String getMyUID() {
         return getFirebaseRef().getAuth().getUid();
     }
 }

@@ -218,7 +218,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         Intent prevIntent = getIntent();
         String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
 
-        String uid = DB.getUID();
+        String uid = DB.getMyUID();
         Firebase userRef = DB.getUsersRef().child(uid);
         Firebase eventsRef = DB.getEventsRef();
 
@@ -257,7 +257,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     }
 
     private ArrayList<TimeBlock> getDates() {
-        String uid = DB.getUID();
+        String uid = DB.getMyUID();
         ArrayList<TimeBlock> dates = new ArrayList<>();
 
         if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {

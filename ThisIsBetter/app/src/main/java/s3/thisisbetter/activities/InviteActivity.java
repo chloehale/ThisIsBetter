@@ -14,9 +14,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 
+import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
@@ -26,11 +28,13 @@ import s3.thisisbetter.adapters.InviteArrayAdapter;
 import s3.thisisbetter.R;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
+import s3.thisisbetter.model.User;
 
 public class InviteActivity extends AppCompatActivity {
 
     private InviteArrayAdapter adapter;
     private ListView listView;
+    private String eventID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +42,70 @@ public class InviteActivity extends AppCompatActivity {
         setContentView(R.layout.activity_invite);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        Intent prevIntent = getIntent();
+        eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
+
+        setupListView();
+        setupFAB();
+
+        Button finishBtn = (Button) findViewById(R.id.button);
+        finishBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                saveInvites();
+                goToHomeScreen();
+            }
+        });
+    }
+
+    private void setupListView() {
+        // Create the firebase query that grabs all of the events I own.
+        Query invitedRef = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY);
+        invitedRef.addChildEventListener(inviteListener);
+
         listView = (ListView) findViewById(R.id.listView);
         adapter = new InviteArrayAdapter(InviteActivity.this, new ArrayList<String>());
+        String myEmail = (String) DB.getFirebaseRef().getAuth().getProviderData().get("email");
+        adapter.setOwnerEmail(myEmail);
         listView.setAdapter(adapter);
+    }
 
+
+    private ChildEventListener inviteListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            // When another user is added to the invitation list for this event, query for
+            // their email address and add it to the list
+
+            String uid = dataSnapshot.getKey();
+            Firebase userRef = DB.getUsersRef().child(uid).child(User.EMAIL_KEY);
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String email = (String) dataSnapshot.getValue();
+                    adapter.addEmail(email);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {}
+            });
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {}
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {}
+    };
+
+    private void setupFAB() {
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,15 +139,6 @@ public class InviteActivity extends AppCompatActivity {
                 dialog.show();
             }
         });
-
-        Button finishBtn = (Button) findViewById(R.id.button);
-        finishBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                saveInvites();
-                goToHomeScreen();
-            }
-        });
     }
 
     private void hideKeyboard(EditText input) {
@@ -110,7 +165,7 @@ public class InviteActivity extends AppCompatActivity {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot userData : dataSnapshot.getChildren()) {
-                    String userEmail = (String) userData.child("email").getValue();
+                    String userEmail = (String) userData.child(User.EMAIL_KEY).getValue();
 
                     // How this is implemented, only emails that are already linked to an account
                     // in our database will be invited
@@ -128,9 +183,6 @@ public class InviteActivity extends AppCompatActivity {
     }
 
     private void updateEventWithInvitations(final ArrayList<String> invitedUIDs) {
-        Intent prevIntent = getIntent();
-        String eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
-
         final Firebase eventRef = DB.getEventsRef().child(eventID);
         eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
