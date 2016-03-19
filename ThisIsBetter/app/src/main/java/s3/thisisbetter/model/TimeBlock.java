@@ -2,6 +2,7 @@ package s3.thisisbetter.model;
 
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -17,7 +18,9 @@ public class TimeBlock implements Comparable<TimeBlock> {
     private int year;
     private String ownerID;
 
-    private Map<String, Map<String, Boolean>> times;
+    private ArrayList<String> times;
+    private Map<String, Map<String, Boolean>> availability;
+    private Map<Integer, String> availabilityIndex;
 
     public TimeBlock() {}
 
@@ -34,18 +37,34 @@ public class TimeBlock implements Comparable<TimeBlock> {
         this.year = year;
         this.ownerID = ownerID;
 
-        times = new HashMap<>();
-        times.put("9am", null);
-        times.put("10am", null);
-        times.put("11am", null);
-        times.put("12pm", null);
-        times.put("1pm", null);
-        times.put("2pm", null);
-        times.put("3pm", null);
-        times.put("4pm", null);
-        times.put("5pm", null);
-        times.put("6pm", null);
-        times.put("7pm", null);
+        times = new ArrayList<>();
+        times.add("9:00am");
+        times.add("10:00am");
+        times.add("11:00am");
+        times.add("12:00pm");
+        times.add("1:00pm");
+        times.add("2:00pm");
+        times.add("3:00pm");
+        times.add("4:00pm");
+        times.add("5:00pm");
+        times.add("6:00pm");
+        times.add("7:00pm");
+
+        availability = new HashMap<>();
+        availabilityIndex = new HashMap<>();
+
+        for (int i = 0; i < times.size(); i++) {
+            availability.put(times.get(i), new HashMap<String, Boolean>());
+            availabilityIndex.put(i, times.get(i));
+        }
+    }
+
+    public void setAvailable(int index, String userID) {
+        availability.get(availabilityIndex.get(index)).put(userID, true);
+    }
+
+    public void setUnavailable(int index, String userID) {
+        availability.get(availabilityIndex.get(index)).put(userID, true);
     }
 
     public int getDay() {
@@ -64,8 +83,8 @@ public class TimeBlock implements Comparable<TimeBlock> {
         return ownerID;
     }
 
-    public Map<String, Map<String, Boolean>> getTimes() {
-        return times;
+    public Map<String, Map<String, Boolean>> getAvailability() {
+        return availability;
     }
 
     public String getShortDescription() {
