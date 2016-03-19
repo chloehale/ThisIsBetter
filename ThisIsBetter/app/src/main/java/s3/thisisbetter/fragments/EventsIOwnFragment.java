@@ -18,7 +18,7 @@ import java.util.ArrayList;
 
 import s3.thisisbetter.R;
 import s3.thisisbetter.activities.CreateEventActivity;
-import s3.thisisbetter.adapters.EventArrayAdapter;
+import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
 
@@ -31,9 +31,9 @@ public class EventsIOwnFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    private EventArrayAdapter adapter;
+    private EventOwnedArrayAdapter adapter;
 
-    public EventsIOwnFragment() {}
+    public EventsIOwnFragment() { }
 
     /**
      * Returns a new instance of this fragment for the given section
@@ -73,7 +73,7 @@ public class EventsIOwnFragment extends Fragment {
         queryRef.addChildEventListener(eventListener);
 
         // Set up the adapter
-        adapter = new EventArrayAdapter(rootView.getContext(), new ArrayList<Event>());
+        adapter = new EventOwnedArrayAdapter(rootView.getContext(), new ArrayList<Event>());
         ListView listView = (ListView) rootView.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
     }

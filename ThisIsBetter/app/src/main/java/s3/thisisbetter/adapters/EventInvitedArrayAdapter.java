@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import s3.thisisbetter.R;
 import s3.thisisbetter.model.Event;
@@ -16,14 +18,16 @@ import s3.thisisbetter.model.Event;
 /**
  * Created by Chloe on 3/17/16.
  */
-public class EventArrayAdapter extends ArrayAdapter<Event> {
+public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
     private final Context context;
     private final ArrayList<Event> values;
+    private Map<String, String> uidToEmail;
 
-    public EventArrayAdapter(Context context, ArrayList<Event> values) {
-        super(context, R.layout.event_cell_view, values);
+    public EventInvitedArrayAdapter(Context context, ArrayList<Event> values) {
+        super(context, R.layout.event_owned_cell_view, values);
         this.context = context;
         this.values = values;
+        this.uidToEmail = new HashMap<>();
     }
 
     @Override
@@ -33,7 +37,7 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         View rowView;
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.event_cell_view, parent, false);
+            rowView = inflater.inflate(R.layout.event_owned_cell_view, parent, false);
         } else {
             rowView = convertView;
         }
@@ -44,16 +48,16 @@ public class EventArrayAdapter extends ArrayAdapter<Event> {
         final Event event = values.get(position);
         eventTitleView.setText(event.getTitle());
         eventTitleView.setTextColor(Color.DKGRAY);
-        int numResponded = event.determineNumberResponded();
-        int totalInvites = event.getInvitedHaveResponded().size();
-        String respondedText = numResponded + " / " + totalInvites + " Responded";
-        numRespondedView.setText(respondedText);
+
+        String ownerDescription = "Owned By: " + uidToEmail.get(event.getOwnerID());
+        numRespondedView.setText(ownerDescription);
 
         return rowView;
     }
 
-    public void addEvent(Event e) {
+    public void addEvent(Event e, String ownerEmail) {
         this.insert(e, 0);
+        uidToEmail.put(e.getOwnerID(), ownerEmail);
     }
 
     public void deleteEvent(Event e) {

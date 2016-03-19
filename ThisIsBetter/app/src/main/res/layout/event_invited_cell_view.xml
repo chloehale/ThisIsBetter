@@ -24,14 +24,4 @@
         android:singleLine="false"
         android:textSize="18sp" />
 
-    <!--<ImageView-->
-        <!--android:id="@+id/trash_icon"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="fill_parent"-->
-        <!--android:contentDescription="trash icon"-->
-        <!--android:src="@drawable/ic_action_trash_message"-->
-        <!--android:layout_alignParentTop="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_alignParentEnd="true" />-->
-
 </RelativeLayout>

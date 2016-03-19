@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import s3.thisisbetter.fragments.AvailabilityInputFragment;
 import s3.thisisbetter.fragments.EventsIOwnFragment;
 import s3.thisisbetter.R;
+import s3.thisisbetter.fragments.EventsInvitedFragment;
 
 public class TabbedEventActivity extends AppCompatActivity {
 
@@ -88,7 +89,7 @@ public class TabbedEventActivity extends AppCompatActivity {
             if (position == 0) {
                 return EventsIOwnFragment.newInstance(position + 1);
             } else {
-                return AvailabilityInputFragment.newInstance(position + 1);
+                return EventsInvitedFragment.newInstance(position + 1);
             }
         }
 
