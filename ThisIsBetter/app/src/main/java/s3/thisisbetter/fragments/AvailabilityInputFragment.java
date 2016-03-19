@@ -5,9 +5,15 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 import s3.thisisbetter.R;
+import s3.thisisbetter.model.TimeBlock;
 
 /**
  * The fragment for the Invited tab
@@ -18,6 +24,7 @@ public class AvailabilityInputFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    private TimeBlock timeBlock;
 
     public AvailabilityInputFragment() {
     }
@@ -26,20 +33,43 @@ public class AvailabilityInputFragment extends Fragment {
      * Returns a new instance of this fragment for the given section
      * number.
      */
-    public static AvailabilityInputFragment newInstance(int sectionNumber) {
+    public static AvailabilityInputFragment newInstance(int sectionNumber, TimeBlock timeBlock) {
         AvailabilityInputFragment fragment = new AvailabilityInputFragment();
         Bundle args = new Bundle();
         args.putInt(ARG_SECTION_NUMBER, sectionNumber);
         fragment.setArguments(args);
+        fragment.setTimeBlock(timeBlock);
         return fragment;
+    }
+
+    public void setTimeBlock(TimeBlock timeBlock) {
+        this.timeBlock = timeBlock;
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_events_invited, container, false);
-//        TextView textView = (TextView) rootView.findViewById(R.id.section_label);
-//        textView.setText(getString(R.string.section_format, getArguments().getInt(ARG_SECTION_NUMBER)));
+        View rootView = inflater.inflate(R.layout.fragment_availability_input, container, false);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_list_item_1, timeBlock.getTimes() );
+        ListView timesListView = (ListView) rootView.findViewById(R.id.times_list_view);
+        timesListView.setAdapter(adapter);
+        timesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
+        timesListView.setItemsCanFocus(false);
+        timesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                if (!timeBlock.isAvailable(position) ) {
+                    view.setBackgroundResource(R.color.colorSelected);
+                    timeBlock.setAvailable(position);
+                }
+                else {
+                    view.setBackgroundResource(R.color.colorLight);
+                    timeBlock.setUnavailable(position);
+                }
+            }
+        });
+
+
         return rootView;
     }
 }

@@ -49,6 +49,7 @@ public class TimeBlock implements Comparable<TimeBlock> {
         times.add("5:00pm");
         times.add("6:00pm");
         times.add("7:00pm");
+        times.add("8:00pm");
 
         availability = new HashMap<>();
         availabilityIndex = new HashMap<>();
@@ -59,13 +60,26 @@ public class TimeBlock implements Comparable<TimeBlock> {
         }
     }
 
-    public void setAvailable(int index, String userID) {
-        availability.get(availabilityIndex.get(index)).put(userID, true);
+    public boolean isAvailable(int index) {
+
+        Boolean available = availability.get(availabilityIndex.get(index)).get(ownerID);
+        if (available == null) {
+            return false;
+        }
+        else {
+            return available;
+        }
     }
 
-    public void setUnavailable(int index, String userID) {
-        availability.get(availabilityIndex.get(index)).put(userID, true);
+    public void setAvailable(int index) {
+        availability.get(availabilityIndex.get(index)).put(ownerID, true);
     }
+
+    public void setUnavailable(int index) {
+        availability.get(availabilityIndex.get(index)).put(ownerID, false);
+    }
+
+    public ArrayList<String> getTimes() { return times; }
 
     public int getDay() {
         return day;

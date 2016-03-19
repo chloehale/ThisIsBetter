@@ -44,6 +44,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     private static int FADED_ALPHA = 180;
     private static int FULL_ALPHA = 255;
     private String parentType;
+    private ArrayList<TimeBlock> dates;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -115,8 +116,8 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     private void setupViewPager() {
         viewPager = (ViewPager) findViewById(R.id.scroll_viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-        for (int i = 0; i < days.size(); i++) {
-            adapter.addFrag(AvailabilityInputFragment.newInstance(i), "");
+        for (int i = 0; i < dates.size(); i++) {
+            adapter.addFrag(AvailabilityInputFragment.newInstance(i, dates.get(i)), "");
         }
         viewPager.setAdapter(adapter);
     }
@@ -204,7 +205,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     private void getData() {
         days = new ArrayList<>();
         months = new ArrayList<>();
-        ArrayList<TimeBlock> dates = getDates();
+        dates = getDates();
 
         // Extract the Data we want to see in the tabs
         for(TimeBlock date : dates) {
@@ -265,7 +266,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
             ArrayList<CalendarDay> datesData = prevIntent.getParcelableArrayListExtra(AppConstants.EXTRA_DATES_ARRAY);
 
             for(CalendarDay date : datesData) {
-                dates.add(new TimeBlock(date, uid));
+                dates.add(new TimeBlock(date.getDay(), date.getMonth(), date.getYear(), uid));
             }
 
         } else {
