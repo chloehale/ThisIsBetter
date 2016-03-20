@@ -61,6 +61,7 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
 
         // Set up the edit icon
         ImageButton editIcon = (ImageButton) rowView.findViewById(R.id.edit_icon);
+        editIcon.setFocusable(false);//set focusable to false required here to still handle click events in the list view
         editIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -89,6 +90,14 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
 
     public void goToEditInvites(View v, Event e) {
         // find the eventID
+        String eventID = getEventID(e);
+
+        Intent intent = new Intent(v.getContext(), InviteActivity.class);
+        intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+        v.getContext().startActivity(intent);
+    }
+
+    public String getEventID(Event e) {
         String eventID = null;
         for (Map.Entry<String, Event> entry : eventIDToObject.entrySet()) {
             if(entry.getValue().equals(e)) {
@@ -96,10 +105,7 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
                 break;
             }
         }
-
-        Intent intent = new Intent(v.getContext(), InviteActivity.class);
-        intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-        v.getContext().startActivity(intent);
+        return eventID;
     }
 
     public void goToEditEvent(View v, Event e) {

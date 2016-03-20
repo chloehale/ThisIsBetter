@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.firebase.client.ChildEventListener;
@@ -16,8 +17,12 @@ import com.firebase.client.Query;
 
 import java.util.ArrayList;
 
+import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
+import s3.thisisbetter.activities.AvailabilityInputActivity;
 import s3.thisisbetter.activities.CreateEventActivity;
+import s3.thisisbetter.activities.InviteActivity;
+import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
@@ -30,6 +35,7 @@ public class EventsIOwnFragment extends Fragment {
      * The fragment argument representing the section number for this
      * fragment.
      */
+    public final static String PARENT_TYPE = "events_i_own";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private EventOwnedArrayAdapter adapter;
 
@@ -76,6 +82,20 @@ public class EventsIOwnFragment extends Fragment {
         adapter = new EventOwnedArrayAdapter(rootView.getContext(), new ArrayList<Event>());
         ListView listView = (ListView) rootView.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
+        setUpListClickListener(listView);
+    }
+
+    private void setUpListClickListener(ListView listView) {
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String eventID = adapter.getEventID(adapter.getItem(position));
+
+                Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
+                intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
+                startActivity(intent);
+            }
+        });
     }
 
     private ChildEventListener eventListener = new ChildEventListener() {
