@@ -42,13 +42,13 @@ public class ViewResponseArrayAdapter extends ArrayAdapter<String> {
         }
 
         TextView text = (TextView) rowView.findViewById(R.id.time_text);
+        text.setText(values.get(position));
 
-
-        String test = values.get(position);
-        text.setText(test);
-
-        TextView availabilityText = (TextView) rowView.findViewById(R.id.availability_text);
-        availabilityText.setText(timeBlock.calculateNumberOfPeopleAvailable(position) + " available");
+        int numAvailable = timeBlock.calculateNumberOfPeopleAvailable(position);
+        if (numAvailable > 0) {
+            TextView availabilityText = (TextView) rowView.findViewById(R.id.availability_text);
+            availabilityText.setText(numAvailable + " available");
+        }
 
         return rowView;
     }

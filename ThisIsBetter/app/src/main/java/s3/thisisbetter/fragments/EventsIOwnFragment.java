@@ -19,9 +19,7 @@ import java.util.ArrayList;
 
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
-import s3.thisisbetter.activities.AvailabilityInputActivity;
 import s3.thisisbetter.activities.CreateEventActivity;
-import s3.thisisbetter.activities.InviteActivity;
 import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
 import s3.thisisbetter.model.DB;
