@@ -18,7 +18,9 @@ import java.util.Map;
 
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
+import s3.thisisbetter.activities.AvailabilityInputActivity;
 import s3.thisisbetter.activities.InviteActivity;
+import s3.thisisbetter.fragments.EventsInvitedFragment;
 import s3.thisisbetter.model.Event;
 
 /**
@@ -109,7 +111,12 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
     }
 
     public void goToEditEvent(View v, Event e) {
-        System.out.println("TODO: Go to editing availability");
+        String eventID = getEventID(e);
+
+        Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
+        intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, EventsInvitedFragment.PARENT_TYPE);
+        intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+        v.getContext().startActivity(intent);
     }
 
     public void addEvent(Event e, String eventID) {

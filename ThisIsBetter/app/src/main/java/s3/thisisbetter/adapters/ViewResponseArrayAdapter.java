@@ -45,9 +45,11 @@ public class ViewResponseArrayAdapter extends ArrayAdapter<String> {
         text.setText(values.get(position));
 
         int numAvailable = timeBlock.calculateNumberOfPeopleAvailable(position);
+        TextView availabilityText = (TextView) rowView.findViewById(R.id.availability_text);
         if (numAvailable > 0) {
-            TextView availabilityText = (TextView) rowView.findViewById(R.id.availability_text);
             availabilityText.setText(numAvailable + " available");
+        } else {
+            availabilityText.setText("");
         }
 
         return rowView;
