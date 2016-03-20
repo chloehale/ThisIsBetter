@@ -16,6 +16,8 @@ import java.util.Map;
 
 public class TimeBlock implements Comparable<TimeBlock> {
 
+    public static final String EVENT_ID_KEY = "eventID";
+
     private int day;
     private int month;
     private int year;
@@ -23,11 +25,13 @@ public class TimeBlock implements Comparable<TimeBlock> {
     private String eventID;
 
     private Map<String, Map<String, Boolean>> availability;
-    private Map<Integer, String> availabilityIndex;
 
-    public TimeBlock() {}
+    public TimeBlock() {
+        availability = new HashMap<>();
+    }
 
     public TimeBlock(CalendarDay data, String ownerID) {
+        this();
         day = data.getDay();
         month = data.getMonth();
         year = data.getYear();
@@ -35,25 +39,21 @@ public class TimeBlock implements Comparable<TimeBlock> {
     }
 
     public TimeBlock(int day, int month, int year, String ownerID) {
+        this();
         this.day = day;
         this.month = month;
         this.year = year;
         this.ownerID = ownerID;
-
-
-        ArrayList<String> times = formTimesArray();
-        availability = new HashMap<>();
-        availabilityIndex = new HashMap<>();
-
-        for (int i = 0; i < times.size(); i++) {
-            availability.put(times.get(i), new HashMap<String, Boolean>());
-            availabilityIndex.put(i, times.get(i));
-        }
     }
 
     public boolean isAvailable(int index) {
+        String stringIndex = generateAvailabilityIndex().get(index);
+        Map<String, Boolean> ownerToBool = availability.get(stringIndex);
 
-        Boolean available = availability.get(availabilityIndex.get(index)).get(ownerID);
+        if (ownerToBool == null) { return false; }
+
+        String uid = DB.getMyUID();
+        Boolean available = ownerToBool.get(uid);
         if (available == null) {
             return false;
         }
@@ -63,14 +63,24 @@ public class TimeBlock implements Comparable<TimeBlock> {
     }
 
     public void setAvailable(int index) {
-        availability.get(availabilityIndex.get(index)).put(ownerID, true);
+        String stringIndex = generateAvailabilityIndex().get(index);
+
+        if (availability.get(stringIndex) == null) {
+            availability.put(stringIndex, new HashMap<String, Boolean>());
+        }
+
+        String uid = DB.getMyUID();
+        availability.get(stringIndex).put(uid, true);
     }
 
     public void setUnavailable(int index) {
-        availability.get(availabilityIndex.get(index)).put(ownerID, false);
+        String stringIndex = generateAvailabilityIndex().get(index);
+        if (availability.get(stringIndex) == null) { return; }
+        String uid = DB.getMyUID();
+        availability.get(stringIndex).put(uid, null);
     }
 
-    public ArrayList<String> formTimesArray() {
+    public ArrayList<String> generateTimesArray() {
         ArrayList<String> times = new ArrayList<>();
         times.add("9:00am");
         times.add("10:00am");
@@ -85,6 +95,17 @@ public class TimeBlock implements Comparable<TimeBlock> {
         times.add("7:00pm");
         times.add("8:00pm");
         return times;
+    }
+
+    public Map<Integer, String> generateAvailabilityIndex() {
+        ArrayList<String> times = generateTimesArray();
+        Map<Integer, String> availabilityIndex = new HashMap<>();
+
+        for (int i = 0; i < times.size(); i++) {
+            availabilityIndex.put(i, times.get(i));
+        }
+
+        return availabilityIndex;
     }
 
     public int getDay() {

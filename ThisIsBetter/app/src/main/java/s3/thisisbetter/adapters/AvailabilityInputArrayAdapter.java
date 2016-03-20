@@ -43,7 +43,7 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
         text.setText(values.get(position));
 
 
-        if (timeBlock.isAvailable(position) ) {
+        if (timeBlock.isAvailable(position)) {
             rowView.setBackgroundResource(R.color.colorSelected);
         }
         else {

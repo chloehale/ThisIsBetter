@@ -1,6 +1,7 @@
 package s3.thisisbetter.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.Image;
 import android.view.LayoutInflater;
@@ -14,7 +15,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
+import s3.thisisbetter.activities.AvailabilityInputActivity;
+import s3.thisisbetter.fragments.EventsInvitedFragment;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
 
@@ -25,20 +29,23 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
     private final Context context;
     private final ArrayList<Event> values;
     private Map<String, String> uidToEmail;
+    private Map<String, Event> eventIDToObject;
+
 
     public EventInvitedArrayAdapter(Context context, ArrayList<Event> values) {
         super(context, R.layout.event_invited_cell_view, values);
         this.context = context;
         this.values = values;
         this.uidToEmail = new HashMap<>();
+        eventIDToObject = new HashMap<>();
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         final Event event = values.get(position);
         boolean haveResponded = event.getInvitedHaveResponded().get(DB.getMyUID());
 
-        View rowView;
+        final View rowView;
         if(haveResponded) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             rowView = inflater.inflate(R.layout.event_owned_cell_view, parent, false);
@@ -47,7 +54,13 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    System.out.println("TODO: Go to editing availability");
+                    Event e = getItem(position);
+                    String eventID = getEventID(e);
+
+                    Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, EventsInvitedFragment.PARENT_TYPE);
+                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                    rowView.getContext().startActivity(intent);
                 }
             });
         } else {
@@ -72,7 +85,18 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
         return rowView;
     }
 
-    public void addEvent(Event e, String ownerEmail) {
+    public String getEventID(Event e) {
+        String eventID = null;
+        for (Map.Entry<String, Event> entry : eventIDToObject.entrySet()) {
+            if(entry.getValue().equals(e)) {
+                eventID = entry.getKey();
+                break;
+            }
+        }
+        return eventID;
+    }
+
+    public void addEvent(Event e, String eventID, String ownerEmail) {
         boolean haveResponded = e.getInvitedHaveResponded().get(DB.getMyUID());
 
         if(haveResponded) {
@@ -82,6 +106,15 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
         }
 
         uidToEmail.put(e.getOwnerID(), ownerEmail);
+        eventIDToObject.put(eventID, e);
+    }
+
+    public void editEvent(Event e, String eventID) {
+        Event oldEventObject = eventIDToObject.get(eventID);
+        int position = this.getPosition(oldEventObject);
+        this.remove(oldEventObject);
+        this.insert(e, position);
+        eventIDToObject.put(eventID, e);
     }
 
     public void deleteEvent(Event e) {

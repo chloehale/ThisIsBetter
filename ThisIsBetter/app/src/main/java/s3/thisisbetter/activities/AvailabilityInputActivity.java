@@ -17,7 +17,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
@@ -29,6 +33,7 @@ import java.util.Map;
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.fragments.AvailabilityInputFragment;
 import s3.thisisbetter.R;
+import s3.thisisbetter.fragments.EventsInvitedFragment;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
 import s3.thisisbetter.model.TimeBlock;
@@ -64,13 +69,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         // Set up the buttons
         setupBackButton();
         setupSaveButton();
-
-        // Set up the tabs
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        setupViewPager();
-        setupTabs();
     }
 
     /**
@@ -96,7 +94,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                     // We just came from the "creating a new event" activity...so it's time to
                     // actually save the event!
                     String eventID = saveNewEvent();
-                    saveUserAvailability();
 
                     Intent intent = new Intent(AvailabilityInputActivity.this, InviteActivity.class);
                     intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
@@ -104,10 +101,22 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                 } else {
                     // TODO: this should be called when the user is responding to an invite
                     saveUserAvailability();
+                    finish();
                 }
 
             }
         });
+    }
+
+    private void onDataRetrieved() {
+        Collections.sort(dates);
+
+        // Set up the tabs
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        setupViewPager();
+        setupTabs();
     }
 
     private void setupViewPager() {
@@ -204,20 +213,40 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         String uid = DB.getMyUID();
         dates = new ArrayList<>();
 
+        Intent prevIntent = getIntent();
+
         if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
             // The user is coming from the CreateEventActivity. The dates are in the intent (not the database).
-            Intent prevIntent = getIntent();
             ArrayList<CalendarDay> datesData = prevIntent.getParcelableArrayListExtra(AppConstants.EXTRA_DATES_ARRAY);
 
             for(CalendarDay date : datesData) {
                 dates.add(new TimeBlock(date.getDay(), date.getMonth(), date.getYear(), uid));
             }
 
-        } else {
+            onDataRetrieved();
+
+        } else if (parentType.equals(EventsInvitedFragment.PARENT_TYPE)) {
+            String eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
+            Query eventDatesQuery = DB.getDatesRef().orderByChild(TimeBlock.EVENT_ID_KEY).equalTo(eventID);
+
+            eventDatesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot dateData : dataSnapshot.getChildren()) {
+                        TimeBlock date = dateData.getValue(TimeBlock.class);
+                        dates.add(date);
+                    }
+
+                    onDataRetrieved();
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) { }
+            });
+
             // TODO: The user is responding to an event (not coming from the CreateEventActivity) load the dates from the database
         }
 
-        Collections.sort(dates);
     }
 
     private String saveNewEvent() {
@@ -259,11 +288,37 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     }
 
     private void saveUserAvailability() {
-        for (TimeBlock date : dates) {
-            System.out.println();
-        }
+        Intent prevIntent = getIntent();
+        String eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
+        Query eventDatesQuery = DB.getDatesRef().orderByChild(TimeBlock.EVENT_ID_KEY).equalTo(eventID);
 
+        eventDatesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot dateData : dataSnapshot.getChildren()) {
+                    TimeBlock date = dateData.getValue(TimeBlock.class);
 
+                    for(TimeBlock updatedDate : dates) {
+                        if(updatedDate.getDay() == date.getDay() &&
+                                updatedDate.getMonth() == date.getMonth() &&
+                                updatedDate.getYear() == date.getYear()) {
+
+                            Firebase dateRef = DB.getDatesRef().child(dateData.getKey());
+                            dateRef.setValue(updatedDate);
+                            break;
+                        }
+                    }
+
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) { }
+        });
+
+        String uid = DB.getMyUID();
+        Firebase eventsRef = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY).child(uid);
+        eventsRef.setValue(true);
 
         // TODO: this is the method that will be called if the user isn't coming from the CreateEventActivity (we don't need to create an event, only save their availability)
     }

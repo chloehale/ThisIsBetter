@@ -48,7 +48,7 @@ public class AvailabilityInputFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_availability_input, container, false);
-        ArrayAdapter<String> adapter = new AvailabilityInputArrayAdapter(rootView.getContext(), timeBlock.formTimesArray(), timeBlock);
+        ArrayAdapter<String> adapter = new AvailabilityInputArrayAdapter(rootView.getContext(), timeBlock.generateTimesArray(), timeBlock);
         ListView timesListView = (ListView) rootView.findViewById(R.id.times_list_view);
         timesListView.setAdapter(adapter);
         timesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);

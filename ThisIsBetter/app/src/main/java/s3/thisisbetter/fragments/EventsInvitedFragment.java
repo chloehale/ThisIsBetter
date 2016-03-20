@@ -1,10 +1,12 @@
 package s3.thisisbetter.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import com.firebase.client.ChildEventListener;
@@ -16,7 +18,10 @@ import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 
+import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
+import s3.thisisbetter.activities.AvailabilityInputActivity;
+import s3.thisisbetter.activities.InviteActivity;
 import s3.thisisbetter.adapters.EventInvitedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
@@ -31,6 +36,7 @@ public class EventsInvitedFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
+    public final static String PARENT_TYPE = "invitation_tab";
     private EventInvitedArrayAdapter adapter;
 
 
@@ -68,6 +74,18 @@ public class EventsInvitedFragment extends Fragment {
         adapter = new EventInvitedArrayAdapter(rootView.getContext(), new ArrayList<Event>());
         ListView listView = (ListView) rootView.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Event e = adapter.getItem(position);
+                String eventID = adapter.getEventID(e);
+
+                Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
+                intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
+                intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                startActivity(intent);
+            }
+        });
     }
 
     private ChildEventListener eventListener = new ChildEventListener() {
@@ -75,16 +93,17 @@ public class EventsInvitedFragment extends Fragment {
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final Event e = dataSnapshot.getValue(Event.class);
             String ownerID = e.getOwnerID();
-
             // The invited tab doesn't show any events you own
             if(ownerID.equals(DB.getMyUID())) { return; }
+
+            final String eventID = dataSnapshot.getKey();
 
             Firebase ownerEmailRef = DB.getUsersRef().child(ownerID).child(User.EMAIL_KEY);
             ownerEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     String ownerEmail = (String) dataSnapshot.getValue();
-                    adapter.addEvent(e, ownerEmail);
+                    adapter.addEvent(e, eventID, ownerEmail);
                 }
 
                 @Override
@@ -94,7 +113,8 @@ public class EventsInvitedFragment extends Fragment {
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
+            Event e = dataSnapshot.getValue(Event.class);
+            adapter.editEvent(e, dataSnapshot.getKey());
         }
 
         @Override
