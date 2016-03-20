@@ -38,9 +38,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private int selectedTabIndex = 0;
-    private ArrayList<String> days;
-    private ArrayList<String> months;
     private static int FADED_ALPHA = 180;
     private static int FULL_ALPHA = 255;
     private String parentType;
@@ -59,9 +56,10 @@ public class AvailabilityInputActivity extends AppCompatActivity {
             window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        // Get the data out of the intent
+        // Get the data
         Intent intent = getIntent();
         parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
+        getDates();
 
         // Set up the buttons
         setupBackButton();
@@ -71,7 +69,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getData();
         setupViewPager();
         setupTabs();
     }
@@ -132,7 +129,8 @@ public class AvailabilityInputActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 TextView month = (TextView) tabLayout.getTabAt(tab.getPosition()).getCustomView().findViewById(R.id.tab_month);
-                month.setText(months.get(tab.getPosition()));
+                int index = tab.getPosition();
+                month.setText(dates.get(index).getMonthString());
 
                 TextView day = (TextView) tabLayout.getTabAt(tab.getPosition()).getCustomView().findViewById(R.id.tab_day);
                 day.setTextColor(Color.argb(FULL_ALPHA, 255, 255, 255));
@@ -154,14 +152,14 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         for(int i = 0; i < tabLayout.getTabCount(); i++) {
             tabLayout.getTabAt(i).setCustomView(R.layout.date_tab_view);
             TextView day = (TextView) tabLayout.getTabAt(i).getCustomView().findViewById(R.id.tab_day);
-            day.setText(days.get(i));
+            day.setText(dates.get(i).getShortDescription());
             day.setTextColor(Color.argb(FADED_ALPHA, 255, 255, 255));
         }
         TextView day = (TextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.tab_day);
         day.setTextColor(Color.argb(FULL_ALPHA, 255, 255, 255));
 
         TextView month = (TextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.tab_month);
-        month.setText(months.get(0));
+        month.setText(dates.get(0).getMonthString());
     }
 
     /**
@@ -202,63 +200,9 @@ public class AvailabilityInputActivity extends AppCompatActivity {
      * HELPER METHODS
      */
 
-    private void getData() {
-        days = new ArrayList<>();
-        months = new ArrayList<>();
-        dates = getDates();
-
-        // Extract the Data we want to see in the tabs
-        for(TimeBlock date : dates) {
-            days.add(date.getShortDescription());
-            months.add(date.getMonthString());
-        }
-    }
-
-    private String saveNewEvent() {
-        Intent prevIntent = getIntent();
-        String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
-
+    private void getDates() {
         String uid = DB.getMyUID();
-        Firebase userRef = DB.getUsersRef().child(uid);
-        Firebase eventsRef = DB.getEventsRef();
-
-        // Create and save the event
-        Event event = new Event(eventTitle, uid);
-        event.inviteByID(uid, true);
-        event.addProposedDateIDs(saveDates());
-
-        Firebase newEventRef = eventsRef.push();
-        newEventRef.setValue(event);
-
-        // Update the user so this event is in their eventsOwned data
-        Map<String, Object> addEventOwned = new HashMap<>();
-        addEventOwned.put(newEventRef.getKey(), true);
-        userRef.child("eventsOwned").updateChildren(addEventOwned);
-
-        return newEventRef.getKey();
-    }
-
-    private ArrayList<String> saveDates() {
-        Firebase datesRef = DB.getDatesRef();
-        ArrayList<String> dateIDs = new ArrayList<>();
-        ArrayList<TimeBlock> dates = getDates();
-
-        for (TimeBlock date : dates) {
-            Firebase newDateRef = datesRef.push();
-            newDateRef.setValue(date);
-            dateIDs.add(newDateRef.getKey());
-        }
-
-        return dateIDs;
-    }
-
-    private void saveUserAvailability() {
-        // TODO: this is the method that will be called if the user isn't coming from the CreateEventActivity (we don't need to create an event, only save their availability)
-    }
-
-    private ArrayList<TimeBlock> getDates() {
-        String uid = DB.getMyUID();
-        ArrayList<TimeBlock> dates = new ArrayList<>();
+        dates = new ArrayList<>();
 
         if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
             // The user is coming from the CreateEventActivity. The dates are in the intent (not the database).
@@ -274,7 +218,56 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         }
 
         Collections.sort(dates);
-        return dates;
     }
+
+    private String saveNewEvent() {
+        Intent prevIntent = getIntent();
+        String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
+
+        String uid = DB.getMyUID();
+        Firebase userRef = DB.getUsersRef().child(uid);
+        Firebase eventsRef = DB.getEventsRef();
+
+        // Create and save the event
+        Firebase newEventRef = eventsRef.push();
+        String newEventID = newEventRef.getKey();
+        Event event = new Event(eventTitle, uid);
+        event.inviteByID(uid, true);
+        saveDatesForEvent(event, newEventID);
+        newEventRef.setValue(event);
+
+        // Update the user so this event is in their eventsOwned data
+        Map<String, Object> addEventOwned = new HashMap<>();
+        addEventOwned.put(newEventID, true);
+        userRef.child("eventsOwned").updateChildren(addEventOwned);
+
+        return newEventID;
+    }
+
+    private void saveDatesForEvent(Event event, String eventID) {
+        Firebase datesRef = DB.getDatesRef();
+        ArrayList<String> dateIDs = new ArrayList<>();
+
+        for (TimeBlock date : dates) {
+            date.setEventID(eventID);
+            Firebase newDateRef = datesRef.push();
+            newDateRef.setValue(date);
+            dateIDs.add(newDateRef.getKey());
+        }
+
+        event.addProposedDateIDs(dateIDs);
+    }
+
+    private void saveUserAvailability() {
+        for (TimeBlock date : dates) {
+            System.out.println();
+        }
+
+
+
+        // TODO: this is the method that will be called if the user isn't coming from the CreateEventActivity (we don't need to create an event, only save their availability)
+    }
+
+
 
 }

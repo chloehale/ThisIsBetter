@@ -8,11 +8,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-
-import java.util.ArrayList;
 
 import s3.thisisbetter.R;
+import s3.thisisbetter.adapters.AvailabilityInputArrayAdapter;
 import s3.thisisbetter.model.TimeBlock;
 
 /**
@@ -50,7 +48,7 @@ public class AvailabilityInputFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_availability_input, container, false);
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(rootView.getContext(), android.R.layout.simple_list_item_1, timeBlock.getTimes() );
+        ArrayAdapter<String> adapter = new AvailabilityInputArrayAdapter(rootView.getContext(), timeBlock.formTimesArray(), timeBlock);
         ListView timesListView = (ListView) rootView.findViewById(R.id.times_list_view);
         timesListView.setAdapter(adapter);
         timesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);

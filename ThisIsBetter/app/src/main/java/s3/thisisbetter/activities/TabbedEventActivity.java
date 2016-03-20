@@ -11,7 +11,6 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import s3.thisisbetter.fragments.AvailabilityInputFragment;
 import s3.thisisbetter.fragments.EventsIOwnFragment;
 import s3.thisisbetter.R;
 import s3.thisisbetter.fragments.EventsInvitedFragment;
@@ -105,7 +104,7 @@ public class TabbedEventActivity extends AppCompatActivity {
                 case 0:
                     return "Events I Own";
                 case 1:
-                    return "Invited";
+                    return "Invitations";
             }
             return null;
         }

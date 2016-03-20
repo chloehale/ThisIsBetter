@@ -60,20 +60,20 @@ public class ViewResponseActivity extends AppCompatActivity {
         }
 
         // Get the data out of the intent
-        Intent intent = getIntent();
-        parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
-
-        // Set up the buttons
-        setupBackButton();
-        setupSaveButton();
-
-        // Set up the tabs
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
-        getData();
-        setupViewPager();
-        setupTabs();
+//        Intent intent = getIntent();
+//        parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
+//
+//        // Set up the buttons
+//        setupBackButton();
+//        setupSaveButton();
+//
+//        // Set up the tabs
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
+//        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+//        getData();
+//        setupViewPager();
+//        setupTabs();
     }
 
     /**
