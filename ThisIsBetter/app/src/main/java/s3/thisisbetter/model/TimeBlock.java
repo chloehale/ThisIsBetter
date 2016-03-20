@@ -147,6 +147,17 @@ public class TimeBlock implements Comparable<TimeBlock> {
         return names[month];
     }
 
+    public int calculateNumberOfPeopleAvailable(int index) {
+        String stringIndex = generateAvailabilityIndex().get(index);
+        Map<String, Boolean> ownerToBool = availability.get(stringIndex);
+
+        if (ownerToBool == null) {
+            return 0;
+        } else {
+            return ownerToBool.size();
+        }
+    }
+
     public void setEventID(String eventID) {
         this.eventID = eventID;
     }

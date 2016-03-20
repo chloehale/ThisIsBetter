@@ -6,10 +6,24 @@
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/time_text"
         android:layout_width="fill_parent"
-        android:layout_height="26dp"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:singleLine="true"
-        android:textSize="12sp">
+        android:textSize="15sp"
+        android:paddingStart="30dip"
+        android:gravity="center_vertical">
+    </TextView>
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/availability_text"
+        android:layout_width="fill_parent"
+        android:layout_height="40dp"
+        android:layout_alignParentBottom="true"
+        android:singleLine="true"
+        android:textSize="15sp"
+        android:paddingEnd="30dip"
+        android:gravity="right|center_vertical"
+        >
     </TextView>
 
 </RelativeLayout>

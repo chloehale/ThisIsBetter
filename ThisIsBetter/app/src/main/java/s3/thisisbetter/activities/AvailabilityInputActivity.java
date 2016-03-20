@@ -210,7 +210,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
      */
 
     private void getDates() {
-        String uid = DB.getMyUID();
         dates = new ArrayList<>();
 
         Intent prevIntent = getIntent();
@@ -219,6 +218,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
             // The user is coming from the CreateEventActivity. The dates are in the intent (not the database).
             ArrayList<CalendarDay> datesData = prevIntent.getParcelableArrayListExtra(AppConstants.EXTRA_DATES_ARRAY);
 
+            String uid = DB.getMyUID();
             for(CalendarDay date : datesData) {
                 dates.add(new TimeBlock(date.getDay(), date.getMonth(), date.getYear(), uid));
             }

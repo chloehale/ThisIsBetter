@@ -3,13 +3,13 @@ package s3.thisisbetter.activities;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
-import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
@@ -17,18 +17,25 @@ import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
+import com.firebase.client.ValueEventListener;
 import com.prolificinteractive.materialcalendarview.CalendarDay;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 import s3.thisisbetter.AppConstants;
-import s3.thisisbetter.R;
 import s3.thisisbetter.fragments.AvailabilityInputFragment;
+import s3.thisisbetter.R;
+import s3.thisisbetter.fragments.EventsIOwnFragment;
+import s3.thisisbetter.fragments.EventsInvitedFragment;
+import s3.thisisbetter.fragments.ViewResponseFragment;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
 import s3.thisisbetter.model.TimeBlock;
@@ -38,9 +45,6 @@ public class ViewResponseActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
-    private int selectedTabIndex = 0;
-    private ArrayList<String> days;
-    private ArrayList<String> months;
     private static int FADED_ALPHA = 180;
     private static int FULL_ALPHA = 255;
     private String parentType;
@@ -49,7 +53,7 @@ public class ViewResponseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_view_response);
+        setContentView(R.layout.activity_availability_input);
 
         //Change the color of the status bar if the version > lollipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
@@ -59,21 +63,14 @@ public class ViewResponseActivity extends AppCompatActivity {
             window.setStatusBarColor(this.getResources().getColor(R.color.colorPrimaryDark));
         }
 
-        // Get the data out of the intent
-//        Intent intent = getIntent();
-//        parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
-//
-//        // Set up the buttons
-//        setupBackButton();
-//        setupSaveButton();
-//
-//        // Set up the tabs
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
-//        getData();
-//        setupViewPager();
-//        setupTabs();
+        // Get the data
+        Intent intent = getIntent();
+        parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
+        getDates();
+
+        // Set up the buttons
+        setupBackButton();
+        setupSaveButton();
     }
 
     /**
@@ -92,32 +89,30 @@ public class ViewResponseActivity extends AppCompatActivity {
 
     private void setupSaveButton() {
         Button nextButton = (Button) findViewById(R.id.next_button);
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
-                    // We just came from the "creating a new event" activity...so it's time to
-                    // actually save the event!
-                    String eventID = saveNewEvent();
-                    saveUserAvailability();
+        nextButton.setVisibility(View.INVISIBLE);
+//        nextButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//            }
+//        });
+    }
 
-                    Intent intent = new Intent(ViewResponseActivity.this, InviteActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-                    startActivity(intent);
-                } else {
-                    // TODO: this should be called when the user is responding to an invite
-                    saveUserAvailability();
-                }
+    private void onDataRetrieved() {
+        Collections.sort(dates);
 
-            }
-        });
+        // Set up the tabs
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        setupViewPager();
+        setupTabs();
     }
 
     private void setupViewPager() {
         viewPager = (ViewPager) findViewById(R.id.scroll_viewpager);
         ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
         for (int i = 0; i < dates.size(); i++) {
-            adapter.addFrag(AvailabilityInputFragment.newInstance(i, dates.get(i)), "");
+            adapter.addFrag(ViewResponseFragment.newInstance(i, dates.get(i)), "");
         }
         viewPager.setAdapter(adapter);
     }
@@ -132,7 +127,8 @@ public class ViewResponseActivity extends AppCompatActivity {
             public void onTabSelected(TabLayout.Tab tab) {
                 super.onTabSelected(tab);
                 TextView month = (TextView) tabLayout.getTabAt(tab.getPosition()).getCustomView().findViewById(R.id.tab_month);
-                month.setText(months.get(tab.getPosition()));
+                int index = tab.getPosition();
+                month.setText(dates.get(index).getMonthString());
 
                 TextView day = (TextView) tabLayout.getTabAt(tab.getPosition()).getCustomView().findViewById(R.id.tab_day);
                 day.setTextColor(Color.argb(FULL_ALPHA, 255, 255, 255));
@@ -154,14 +150,14 @@ public class ViewResponseActivity extends AppCompatActivity {
         for(int i = 0; i < tabLayout.getTabCount(); i++) {
             tabLayout.getTabAt(i).setCustomView(R.layout.date_tab_view);
             TextView day = (TextView) tabLayout.getTabAt(i).getCustomView().findViewById(R.id.tab_day);
-            day.setText(days.get(i));
+            day.setText(dates.get(i).getShortDescription());
             day.setTextColor(Color.argb(FADED_ALPHA, 255, 255, 255));
         }
         TextView day = (TextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.tab_day);
         day.setTextColor(Color.argb(FULL_ALPHA, 255, 255, 255));
 
         TextView month = (TextView) tabLayout.getTabAt(0).getCustomView().findViewById(R.id.tab_month);
-        month.setText(months.get(0));
+        month.setText(dates.get(0).getMonthString());
     }
 
     /**
@@ -202,79 +198,32 @@ public class ViewResponseActivity extends AppCompatActivity {
      * HELPER METHODS
      */
 
-    private void getData() {
-        days = new ArrayList<>();
-        months = new ArrayList<>();
-        dates = getDates();
+    private void getDates() {
+        dates = new ArrayList<>();
 
-        // Extract the Data we want to see in the tabs
-        for(TimeBlock date : dates) {
-            days.add(date.getShortDescription());
-            months.add(date.getMonthString());
-        }
-    }
-
-    private String saveNewEvent() {
         Intent prevIntent = getIntent();
-        String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
+        String eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
+        Query eventDatesQuery = DB.getDatesRef().orderByChild(TimeBlock.EVENT_ID_KEY).equalTo(eventID);
 
-        String uid = DB.getMyUID();
-        Firebase userRef = DB.getUsersRef().child(uid);
-        Firebase eventsRef = DB.getEventsRef();
+        eventDatesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for (DataSnapshot dateData : dataSnapshot.getChildren()) {
+                    TimeBlock date = dateData.getValue(TimeBlock.class);
+                    dates.add(date);
+                }
 
-        // Create and save the event
-        Event event = new Event(eventTitle, uid);
-        event.inviteByID(uid, true);
-        event.addProposedDateIDs(saveDates());
-
-        Firebase newEventRef = eventsRef.push();
-        newEventRef.setValue(event);
-
-        // Update the user so this event is in their eventsOwned data
-        Map<String, Object> addEventOwned = new HashMap<>();
-        addEventOwned.put(newEventRef.getKey(), true);
-        userRef.child("eventsOwned").updateChildren(addEventOwned);
-
-        return newEventRef.getKey();
-    }
-
-    private ArrayList<String> saveDates() {
-        Firebase datesRef = DB.getDatesRef();
-        ArrayList<String> dateIDs = new ArrayList<>();
-        ArrayList<TimeBlock> dates = getDates();
-
-        for (TimeBlock date : dates) {
-            Firebase newDateRef = datesRef.push();
-            newDateRef.setValue(date);
-            dateIDs.add(newDateRef.getKey());
-        }
-
-        return dateIDs;
-    }
-
-    private void saveUserAvailability() {
-        // TODO: this is the method that will be called if the user isn't coming from the CreateEventActivity (we don't need to create an event, only save their availability)
-    }
-
-    private ArrayList<TimeBlock> getDates() {
-        String uid = DB.getMyUID();
-        ArrayList<TimeBlock> dates = new ArrayList<>();
-
-        if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
-            // The user is coming from the CreateEventActivity. The dates are in the intent (not the database).
-            Intent prevIntent = getIntent();
-            ArrayList<CalendarDay> datesData = prevIntent.getParcelableArrayListExtra(AppConstants.EXTRA_DATES_ARRAY);
-
-            for(CalendarDay date : datesData) {
-                dates.add(new TimeBlock(date.getDay(), date.getMonth(), date.getYear(), uid));
+                onDataRetrieved();
             }
 
-        } else {
-            // TODO: The user is responding to an event (not coming from the CreateEventActivity) load the dates from the database
-        }
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+            }
+        });
 
-        Collections.sort(dates);
-        return dates;
     }
+
+
+
 
 }
