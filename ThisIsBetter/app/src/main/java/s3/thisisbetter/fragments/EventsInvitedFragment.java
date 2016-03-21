@@ -21,7 +21,6 @@ import java.util.ArrayList;
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.activities.AvailabilityInputActivity;
-import s3.thisisbetter.activities.InviteActivity;
 import s3.thisisbetter.adapters.EventInvitedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
@@ -69,6 +68,8 @@ public class EventsInvitedFragment extends Fragment {
         String uid = DB.getMyUID();
         Query queryRef = DB.getEventsRef().orderByChild(Event.INVITED_KEY + "/" + uid);
         queryRef.addChildEventListener(eventListener);
+        DB.monitorChildListener(queryRef, eventListener);
+
 
         // Set up the adapter
         adapter = new EventInvitedArrayAdapter(rootView.getContext(), new ArrayList<Event>());

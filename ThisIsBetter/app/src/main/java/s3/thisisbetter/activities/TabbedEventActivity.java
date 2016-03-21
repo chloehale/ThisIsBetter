@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import s3.thisisbetter.fragments.EventsIOwnFragment;
 import s3.thisisbetter.R;
 import s3.thisisbetter.fragments.EventsInvitedFragment;
+import s3.thisisbetter.fragments.SettingsFragment;
 
 public class TabbedEventActivity extends AppCompatActivity {
 
@@ -87,15 +88,17 @@ public class TabbedEventActivity extends AppCompatActivity {
             // getItem is called to instantiate the fragment for the given page.
             if (position == 0) {
                 return EventsIOwnFragment.newInstance(position + 1);
-            } else {
+            } else if (position == 1) {
                 return EventsInvitedFragment.newInstance(position + 1);
+            } else {
+                return SettingsFragment.newInstance(position + 1);
             }
         }
 
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 2;
+            return 3;
         }
 
         @Override
@@ -105,6 +108,8 @@ public class TabbedEventActivity extends AppCompatActivity {
                     return "Events I Own";
                 case 1:
                     return "Invitations";
+                case 2:
+                    return "Settings";
             }
             return null;
         }

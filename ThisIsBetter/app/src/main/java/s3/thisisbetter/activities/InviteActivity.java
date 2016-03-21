@@ -63,6 +63,7 @@ public class InviteActivity extends AppCompatActivity {
         // Create the firebase query that grabs all of the events I own.
         Query invitedRef = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY);
         invitedRef.addChildEventListener(inviteListener);
+        DB.monitorChildListener(invitedRef, inviteListener);
 
         listView = (ListView) findViewById(R.id.listView);
         adapter = new InviteArrayAdapter(InviteActivity.this, new ArrayList<String>());

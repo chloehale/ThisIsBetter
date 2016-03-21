@@ -75,6 +75,7 @@ public class EventsIOwnFragment extends Fragment {
         String uid = DB.getMyUID();
         Query queryRef = DB.getEventsRef().orderByChild(Event.OWNER_KEY).equalTo(uid);
         queryRef.addChildEventListener(eventListener);
+        DB.monitorChildListener(queryRef, eventListener);
 
         // Set up the adapter
         adapter = new EventOwnedArrayAdapter(rootView.getContext(), new ArrayList<Event>());
