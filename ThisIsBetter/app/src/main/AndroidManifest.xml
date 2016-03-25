@@ -37,10 +37,11 @@
         <activity
             android:name=".activities.InviteActivity"
             android:label="@string/title_activity_invite"
-            android:windowSoftInputMode="stateHidden"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:windowSoftInputMode="stateHidden" />
+        <activity
+            android:name=".activities.ViewResponseActivity"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".activities.ViewResponseActivity"
-            android:theme="@style/AppTheme.NoActionBar"/>
     </application>
 
 </manifest>
