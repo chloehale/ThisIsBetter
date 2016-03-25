@@ -84,6 +84,7 @@ public class EventsInvitedFragment extends Fragment {
                 Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
                 intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
                 intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
                 startActivity(intent);
             }
         });
