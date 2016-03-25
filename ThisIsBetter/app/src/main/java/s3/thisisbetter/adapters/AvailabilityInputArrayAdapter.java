@@ -39,6 +39,13 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
             rowView = convertView;
         }
 
+        View topDivider = rowView.findViewById(R.id.top_divider);
+        if (position == 0) {
+            topDivider.setVisibility(View.VISIBLE);
+        } else {
+            topDivider.setVisibility(View.GONE);
+        }
+
         TextView text = (TextView) rowView.findViewById(R.id.time_text);
         text.setText(values.get(position));
 

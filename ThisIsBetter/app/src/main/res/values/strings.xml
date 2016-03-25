@@ -23,7 +23,7 @@
     <string name="save_button">SAVE</string>
     <string name="prompt_event_title">Event Title</string>
     <string name="calendar_instructions">Tap the potential dates for your event</string>
-    <string name="input_time_instructions">Tap the times you are available</string>
+    <string name="input_time_instructions">Tap all the times you are available</string>
     <string name="title_activity_invite"></string>
 
     <string name="title_activity_main">MainActivity</string>
@@ -32,7 +32,6 @@
     <string name="FinishButtonMessage">You can always change this later.</string>
     <string name="FinishButtonLabel">FINISH</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <color name="divider_grey">#D0D0D0</color>
 
 </resources>
