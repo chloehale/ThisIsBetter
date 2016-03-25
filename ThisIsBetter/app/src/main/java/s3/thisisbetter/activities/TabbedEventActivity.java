@@ -1,5 +1,6 @@
 package s3.thisisbetter.activities;
 
+import android.content.Intent;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
@@ -10,13 +11,19 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.support.v7.widget.Toolbar;
+import android.view.View;
+import android.widget.PopupMenu;
+
+import com.firebase.client.Firebase;
 
 import s3.thisisbetter.fragments.EventsIOwnFragment;
 import s3.thisisbetter.R;
 import s3.thisisbetter.fragments.EventsInvitedFragment;
 import s3.thisisbetter.fragments.SettingsFragment;
+import s3.thisisbetter.model.DB;
 
 public class TabbedEventActivity extends AppCompatActivity {
 
@@ -59,6 +66,31 @@ public class TabbedEventActivity extends AppCompatActivity {
         tabLayout.setupWithViewPager(mViewPager);
     }
 
+
+    public void showPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                switch(item.getItemId()) {
+                    case R.id.logout_item:
+                        DB.removeAllListeners();
+
+                        Firebase ref = DB.getFirebaseRef();
+                        ref.unauth();
+
+                        Intent intent = new Intent(TabbedEventActivity.this, LoginActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Removes other activities from the stack
+                        startActivity(intent);
+                        return true;
+                }
+                return false;
+            }
+        });
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.settings_menu_popup, popup.getMenu());
+        popup.show();
+    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
