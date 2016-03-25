@@ -18,15 +18,6 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" >
 
             <Button
-                android:id="@+id/back_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/back_button"
-                android:minWidth="0dp"
-                android:textColor="#fff"
-                android:background="@null"
-                />
-            <Button
                 android:id="@+id/next_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

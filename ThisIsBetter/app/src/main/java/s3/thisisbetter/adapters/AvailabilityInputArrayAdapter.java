@@ -22,7 +22,7 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
     private TimeBlock timeBlock;
 
     public AvailabilityInputArrayAdapter(Context context, ArrayList<String> values, TimeBlock timeBlock) {
-        super(context, R.layout.event_invited_cell_view, values);
+        super(context, R.layout.cell_event_invited_view, values);
         this.context = context;
         this.values = values;
         this.timeBlock = timeBlock;
@@ -34,16 +34,30 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
         View rowView;
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.time_cell_view, parent, false);
+            rowView = inflater.inflate(R.layout.cell_availability_input_view, parent, false);
         } else {
             rowView = convertView;
+        }
+
+        View topDivider = rowView.findViewById(R.id.top_divider);
+        if (position == 0) {
+            topDivider.setVisibility(View.VISIBLE);
+        } else {
+            topDivider.setVisibility(View.GONE);
         }
 
         TextView text = (TextView) rowView.findViewById(R.id.time_text);
         text.setText(values.get(position));
 
+        int numAvailable = timeBlock.calculateNumberOfPeopleAvailableAtTime(position);
+        TextView availabilityText = (TextView) rowView.findViewById(R.id.availability_text);
+        if (numAvailable > 0) {
+            availabilityText.setText(numAvailable + " available");
+        } else {
+            availabilityText.setText("");
+        }
 
-        if (timeBlock.isAvailable(position)) {
+        if (timeBlock.isAvailableAtTime(position)) {
             rowView.setBackgroundResource(R.color.colorSelected);
         }
         else {

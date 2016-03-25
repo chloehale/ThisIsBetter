@@ -1,5 +1,7 @@
 package s3.thisisbetter.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -11,6 +13,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -27,8 +30,6 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.fragments.AvailabilityInputFragment;
@@ -47,6 +48,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     private static int FULL_ALPHA = 255;
     private String parentType;
     private ArrayList<TimeBlock> dates;
+    private String eventTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,10 +66,9 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         // Get the data
         Intent intent = getIntent();
         parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
-        getDates();
+        getData();
 
         // Set up the buttons
-        setupBackButton();
         setupSaveButton();
     }
 
@@ -75,14 +76,16 @@ public class AvailabilityInputActivity extends AppCompatActivity {
      * SETUP METHODS
      */
 
-    private void setupBackButton() {
-        Button backButton = (Button) findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // React to the user tapping the back/up icon in the action bar
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setupSaveButton() {
@@ -90,20 +93,11 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
-                    // We just came from the "creating a new event" activity...so it's time to
-                    // actually save the event!
-                    String eventID = saveNewEvent();
-
-                    Intent intent = new Intent(AvailabilityInputActivity.this, InviteActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-                    startActivity(intent);
+                if(!isUserEverAvailable()) {
+                    showConfirmationDialog();
                 } else {
-                    // TODO: this should be called when the user is responding to an invite
-                    saveUserAvailability();
-                    finish();
+                    saveTapped();
                 }
-
             }
         });
     }
@@ -113,8 +107,11 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
         // Set up the tabs
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        String title = "Availability For: " + eventTitle;
+        toolbar.setTitle(title);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         setupViewPager();
         setupTabs();
     }
@@ -159,7 +156,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
     public void initializeDateTabs() {
         for(int i = 0; i < tabLayout.getTabCount(); i++) {
-            tabLayout.getTabAt(i).setCustomView(R.layout.date_tab_view);
+            tabLayout.getTabAt(i).setCustomView(R.layout.tab_date_view);
             TextView day = (TextView) tabLayout.getTabAt(i).getCustomView().findViewById(R.id.tab_day);
             day.setText(dates.get(i).getShortDescription());
             day.setTextColor(Color.argb(FADED_ALPHA, 255, 255, 255));
@@ -202,17 +199,27 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
-
     }
 
     /**
      * HELPER METHODS
      */
 
-    private void getDates() {
+    private boolean isUserEverAvailable() {
+        for(TimeBlock t : dates) {
+            if(t.isUserEverAvailable()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void getData() {
         dates = new ArrayList<>();
 
         Intent prevIntent = getIntent();
+        eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
 
         if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
             // The user is coming from the CreateEventActivity. The dates are in the intent (not the database).
@@ -243,18 +250,47 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(FirebaseError firebaseError) { }
             });
-
-            // TODO: The user is responding to an event (not coming from the CreateEventActivity) load the dates from the database
         }
+    }
 
+    private void showConfirmationDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AvailabilityInputActivity.this);
+        alertDialogBuilder.setTitle("Are You Sure?")
+                .setMessage("You haven't set any times that you're available. Are you really that busy?")
+                .setCancelable(false)
+                .setPositiveButton("Yes, I'm Never Available", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveTapped();
+                    }
+                })
+                .setNegativeButton("No, Go Back", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialogBuilder.create().show();
+    }
+
+    private void saveTapped() {
+        if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
+            // We just came from the "creating a new event" activity...so it's time to
+            // actually save the event!
+            String eventID = saveNewEvent();
+
+            Intent intent = new Intent(AvailabilityInputActivity.this, InviteActivity.class);
+            intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+            startActivity(intent);
+        } else {
+            saveUserAvailability();
+            finish();
+        }
     }
 
     private String saveNewEvent() {
-        Intent prevIntent = getIntent();
-        String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
-
         String uid = DB.getMyUID();
-        Firebase userRef = DB.getUsersRef().child(uid);
         Firebase eventsRef = DB.getEventsRef();
 
         // Create and save the event
@@ -264,11 +300,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         event.inviteByID(uid, true);
         saveDatesForEvent(event, newEventID);
         newEventRef.setValue(event);
-
-        // Update the user so this event is in their eventsOwned data
-        Map<String, Object> addEventOwned = new HashMap<>();
-        addEventOwned.put(newEventID, true);
-        userRef.child("eventsOwned").updateChildren(addEventOwned);
 
         return newEventID;
     }
@@ -308,7 +339,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                             break;
                         }
                     }
-
                 }
             }
 
@@ -319,10 +349,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         String uid = DB.getMyUID();
         Firebase eventsRef = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY).child(uid);
         eventsRef.setValue(true);
-
-        // TODO: this is the method that will be called if the user isn't coming from the CreateEventActivity (we don't need to create an event, only save their availability)
     }
-
-
 
 }

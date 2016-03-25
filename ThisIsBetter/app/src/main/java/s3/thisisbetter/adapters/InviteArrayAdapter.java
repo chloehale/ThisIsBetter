@@ -4,14 +4,12 @@ import android.app.Activity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.WebView;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 
 import s3.thisisbetter.R;
-import s3.thisisbetter.model.TeamMember;
 
 /**
  * Created by psoder3 on 3/17/16.

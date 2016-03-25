@@ -3,7 +3,6 @@ package s3.thisisbetter.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,7 +32,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
 
 
     public EventInvitedArrayAdapter(Context context, ArrayList<Event> values) {
-        super(context, R.layout.event_invited_cell_view, values);
+        super(context, R.layout.cell_event_invited_view, values);
         this.context = context;
         this.values = values;
         this.uidToEmail = new HashMap<>();
@@ -48,7 +47,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
         final View rowView;
         if(haveResponded) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.event_owned_cell_view, parent, false);
+            rowView = inflater.inflate(R.layout.cell_event_owned_view, parent, false);
 
             ImageButton editButton = (ImageButton) rowView.findViewById(R.id.edit_icon);
             editButton.setOnClickListener(new View.OnClickListener() {
@@ -60,12 +59,13 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
                     Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
                     intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, EventsInvitedFragment.PARENT_TYPE);
                     intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                    intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
                     rowView.getContext().startActivity(intent);
                 }
             });
         } else {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.event_invited_cell_view, parent, false);
+            rowView = inflater.inflate(R.layout.cell_event_invited_view, parent, false);
         }
 
         TextView eventTitleView = (TextView) rowView.findViewById(R.id.first_line);

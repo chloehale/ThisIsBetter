@@ -11,16 +11,10 @@ public class User {
     public static final String EMAIL_KEY = "email";
 
     private String email;
-    private Map<String, Boolean> eventsOwned;
     private Map<String, Boolean> eventsInvitedTo;
 
     public User() {
-        eventsOwned = new HashMap<>();
         eventsInvitedTo = new HashMap<>();
-    }
-
-    public Map<String, Boolean> getEventsOwned() {
-        return eventsOwned;
     }
 
     public Map<String, Boolean> getEventsInvitedTo() {

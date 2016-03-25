@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <View
+        android:id="@+id/top_divider"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/divider_grey" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/time_text"
@@ -10,9 +19,8 @@
         android:layout_alignParentBottom="true"
         android:singleLine="true"
         android:textSize="15sp"
-        android:paddingStart="30dip"
-        android:gravity="center_vertical">
-    </TextView>
+        android:paddingStart="30dp"
+        android:gravity="center_vertical" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/availability_text"
@@ -21,9 +29,13 @@
         android:layout_alignParentBottom="true"
         android:singleLine="true"
         android:textSize="15sp"
-        android:paddingEnd="30dip"
-        android:gravity="right|center_vertical"
-        >
-    </TextView>
+        android:paddingEnd="30dp"
+        android:gravity="right|center_vertical" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/divider_grey" />
 
 </RelativeLayout>

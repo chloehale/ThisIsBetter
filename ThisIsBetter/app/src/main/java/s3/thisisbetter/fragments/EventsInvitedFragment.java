@@ -93,13 +93,16 @@ public class EventsInvitedFragment extends Fragment {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
             final Event e = dataSnapshot.getValue(Event.class);
-            String ownerID = e.getOwnerID();
-            // The invited tab doesn't show any events you own
-            if(ownerID.equals(DB.getMyUID())) { return; }
+            String ownerUID = e.getOwnerID();
+            String myUID = DB.getMyUID();
+
+            // The invited tab doesn't show any events you own or events that you aren't invited to
+            if(ownerUID.equals(myUID)) { return; }
+            if(!e.getInvitedHaveResponded().containsKey(myUID)) { return; }
 
             final String eventID = dataSnapshot.getKey();
 
-            Firebase ownerEmailRef = DB.getUsersRef().child(ownerID).child(User.EMAIL_KEY);
+            Firebase ownerEmailRef = DB.getUsersRef().child(ownerUID).child(User.EMAIL_KEY);
             ownerEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
