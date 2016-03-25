@@ -1,17 +1,13 @@
 package s3.thisisbetter.activities;
 
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -26,7 +22,7 @@ import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
 
 
-public class NewViewResponseActivity extends AppCompatActivity {
+public class ViewResponseActivity extends AppCompatActivity {
 
     private String parentType;
     private String eventID;
@@ -35,7 +31,7 @@ public class NewViewResponseActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_new_view_response);
+        setContentView(R.layout.activity_view_response);
 
         //Change the color of the status bar if the version > lollipop
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {

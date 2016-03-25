@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.activities.CreateEventActivity;
-import s3.thisisbetter.activities.NewViewResponseActivity;
+import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
@@ -89,7 +89,7 @@ public class EventsIOwnFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String eventID = adapter.getEventID(adapter.getItem(position));
 
-                Intent intent = new Intent(getActivity(), NewViewResponseActivity.class);
+                Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
                 intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
                 intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
                 startActivity(intent);
