@@ -35,7 +35,7 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
     private Map<String, Event> eventIDToObject;
 
     public EventOwnedArrayAdapter(Context context, ArrayList<Event> values) {
-        super(context, R.layout.event_owned_cell_view, values);
+        super(context, R.layout.cell_event_owned_view, values);
         this.context = context;
         this.values = values;
         eventIDToObject = new HashMap<>();
@@ -47,7 +47,7 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
         View rowView;
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.event_owned_cell_view, parent, false);
+            rowView = inflater.inflate(R.layout.cell_event_owned_view, parent, false);
         } else {
             rowView = convertView;
         }
@@ -88,7 +88,7 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
                         return false;
                     }
                 });
-                popup.getMenuInflater().inflate(R.menu.menu_popup, popup.getMenu());
+                popup.getMenuInflater().inflate(R.menu.menu_edit_event_popup, popup.getMenu());
                 popup.show();
             }
         });

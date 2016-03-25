@@ -40,9 +40,6 @@
             android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden" />
         <activity
-            android:name=".activities.ViewResponseActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
-        <activity
             android:name=".activities.NewViewResponseActivity"
             android:theme="@style/AppTheme.NoActionBar" />
     </application>

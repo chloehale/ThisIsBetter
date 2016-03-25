@@ -48,22 +48,21 @@ public class AvailabilityInputFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_availability_input, container, false);
-        ArrayAdapter<String> adapter = new AvailabilityInputArrayAdapter(rootView.getContext(), timeBlock.generateTimesArray(), timeBlock);
+        final ArrayAdapter<String> adapter = new AvailabilityInputArrayAdapter(rootView.getContext(), timeBlock.generateTimesArray(), timeBlock);
         ListView timesListView = (ListView) rootView.findViewById(R.id.times_list_view);
         timesListView.setAdapter(adapter);
         timesListView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE);
         timesListView.setItemsCanFocus(false);
         timesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
                 if (!timeBlock.isAvailable(position) ) {
-                    view.setBackgroundResource(R.color.colorSelected);
                     timeBlock.setAvailable(position);
                 }
                 else {
-                    view.setBackgroundResource(R.color.colorLight);
                     timeBlock.setUnavailable(position);
                 }
+
+                adapter.notifyDataSetInvalidated();
             }
         });
 

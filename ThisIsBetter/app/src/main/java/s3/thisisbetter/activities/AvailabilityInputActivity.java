@@ -27,8 +27,6 @@ import com.prolificinteractive.materialcalendarview.CalendarDay;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.fragments.AvailabilityInputFragment;
@@ -103,7 +101,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                     saveUserAvailability();
                     finish();
                 }
-
             }
         });
     }
@@ -159,7 +156,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
     public void initializeDateTabs() {
         for(int i = 0; i < tabLayout.getTabCount(); i++) {
-            tabLayout.getTabAt(i).setCustomView(R.layout.date_tab_view);
+            tabLayout.getTabAt(i).setCustomView(R.layout.tab_date_view);
             TextView day = (TextView) tabLayout.getTabAt(i).getCustomView().findViewById(R.id.tab_day);
             day.setText(dates.get(i).getShortDescription());
             day.setTextColor(Color.argb(FADED_ALPHA, 255, 255, 255));
@@ -202,7 +199,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
-
     }
 
     /**
@@ -243,10 +239,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(FirebaseError firebaseError) { }
             });
-
-            // TODO: The user is responding to an event (not coming from the CreateEventActivity) load the dates from the database
         }
-
     }
 
     private String saveNewEvent() {
@@ -254,7 +247,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
 
         String uid = DB.getMyUID();
-        Firebase userRef = DB.getUsersRef().child(uid);
         Firebase eventsRef = DB.getEventsRef();
 
         // Create and save the event
@@ -313,10 +305,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         String uid = DB.getMyUID();
         Firebase eventsRef = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY).child(uid);
         eventsRef.setValue(true);
-
-        // TODO: this is the method that will be called if the user isn't coming from the CreateEventActivity (we don't need to create an event, only save their availability)
     }
-
-
 
 }
