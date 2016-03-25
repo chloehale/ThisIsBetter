@@ -42,7 +42,7 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
         TextView text = (TextView) rowView.findViewById(R.id.time_text);
         text.setText(values.get(position));
 
-        int numAvailable = timeBlock.calculateNumberOfPeopleAvailable(position);
+        int numAvailable = timeBlock.calculateNumberOfPeopleAvailableAtTime(position);
         TextView availabilityText = (TextView) rowView.findViewById(R.id.availability_text);
         if (numAvailable > 0) {
             availabilityText.setText(numAvailable + " available");
@@ -50,7 +50,7 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
             availabilityText.setText("");
         }
 
-        if (timeBlock.isAvailable(position)) {
+        if (timeBlock.isAvailableAtTime(position)) {
             rowView.setBackgroundResource(R.color.colorSelected);
         }
         else {

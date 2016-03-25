@@ -55,11 +55,11 @@ public class AvailabilityInputFragment extends Fragment {
         timesListView.setItemsCanFocus(false);
         timesListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                if (!timeBlock.isAvailable(position) ) {
-                    timeBlock.setAvailable(position);
+                if (!timeBlock.isAvailableAtTime(position) ) {
+                    timeBlock.setAvailableAtTime(position);
                 }
                 else {
-                    timeBlock.setUnavailable(position);
+                    timeBlock.setUnavailableAtTime(position);
                 }
 
                 adapter.notifyDataSetInvalidated();

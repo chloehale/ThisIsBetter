@@ -131,7 +131,7 @@ public class TimeBlock implements Comparable<TimeBlock> {
      * AVAILABILITY METHODS
      */
 
-    public boolean isAvailable(int index) {
+    public boolean isAvailableAtTime(int index) {
         String stringIndex = generateAvailabilityIndex().get(index);
         Map<String, Boolean> ownerToBool = availability.get(stringIndex);
 
@@ -147,7 +147,7 @@ public class TimeBlock implements Comparable<TimeBlock> {
         }
     }
 
-    public void setAvailable(int index) {
+    public void setAvailableAtTime(int index) {
         String stringIndex = generateAvailabilityIndex().get(index);
 
         if (availability.get(stringIndex) == null) {
@@ -158,14 +158,14 @@ public class TimeBlock implements Comparable<TimeBlock> {
         availability.get(stringIndex).put(uid, true);
     }
 
-    public void setUnavailable(int index) {
+    public void setUnavailableAtTime(int index) {
         String stringIndex = generateAvailabilityIndex().get(index);
         if (availability.get(stringIndex) == null) { return; }
         String uid = DB.getMyUID();
         availability.get(stringIndex).remove(uid);
     }
 
-    public int calculateNumberOfPeopleAvailable(int index) {
+    public int calculateNumberOfPeopleAvailableAtTime(int index) {
         String stringIndex = generateAvailabilityIndex().get(index);
         Map<String, Boolean> ownerToBool = availability.get(stringIndex);
 
@@ -174,6 +174,20 @@ public class TimeBlock implements Comparable<TimeBlock> {
         } else {
             return ownerToBool.size();
         }
+    }
+
+    public boolean isUserEverAvailable() {
+        String uid = DB.getMyUID();
+
+        for(Map<String, Boolean> ownerToBool : availability.values()) {
+            for(Map.Entry<String, Boolean> entry : ownerToBool.entrySet()) {
+                if (entry.getKey().equals(uid)) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 

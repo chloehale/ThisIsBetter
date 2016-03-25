@@ -1,5 +1,7 @@
 package s3.thisisbetter.activities;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -91,18 +93,10 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
-                    // We just came from the "creating a new event" activity...so it's time to
-                    // actually save the event!
-                    String eventID = saveNewEvent();
-
-                    Intent intent = new Intent(AvailabilityInputActivity.this, InviteActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-                    startActivity(intent);
+                if(!isUserEverAvailable()) {
+                    showConfirmationDialog();
                 } else {
-                    // TODO: this should be called when the user is responding to an invite
-                    saveUserAvailability();
-                    finish();
+                    saveTapped();
                 }
             }
         });
@@ -211,6 +205,16 @@ public class AvailabilityInputActivity extends AppCompatActivity {
      * HELPER METHODS
      */
 
+    private boolean isUserEverAvailable() {
+        for(TimeBlock t : dates) {
+            if(t.isUserEverAvailable()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private void getData() {
         dates = new ArrayList<>();
 
@@ -246,6 +250,42 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                 @Override
                 public void onCancelled(FirebaseError firebaseError) { }
             });
+        }
+    }
+
+    private void showConfirmationDialog() {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AvailabilityInputActivity.this);
+        alertDialogBuilder.setTitle("Are You Sure?")
+                .setMessage("You haven't set any times that you're available. Are you really that busy?")
+                .setCancelable(false)
+                .setPositiveButton("Yes, I'm Never Available", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        saveTapped();
+                    }
+                })
+                .setNegativeButton("No, Go Back", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+
+        alertDialogBuilder.create().show();
+    }
+
+    private void saveTapped() {
+        if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
+            // We just came from the "creating a new event" activity...so it's time to
+            // actually save the event!
+            String eventID = saveNewEvent();
+
+            Intent intent = new Intent(AvailabilityInputActivity.this, InviteActivity.class);
+            intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+            startActivity(intent);
+        } else {
+            saveUserAvailability();
+            finish();
         }
     }
 
