@@ -59,6 +59,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
                     Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
                     intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, EventsInvitedFragment.PARENT_TYPE);
                     intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                    intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
                     rowView.getContext().startActivity(intent);
                 }
             });

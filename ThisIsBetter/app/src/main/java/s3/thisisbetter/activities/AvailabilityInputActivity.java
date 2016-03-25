@@ -11,6 +11,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -45,6 +46,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     private static int FULL_ALPHA = 255;
     private String parentType;
     private ArrayList<TimeBlock> dates;
+    private String eventTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +64,9 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         // Get the data
         Intent intent = getIntent();
         parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
-        getDates();
+        getData();
 
         // Set up the buttons
-        setupBackButton();
         setupSaveButton();
     }
 
@@ -73,14 +74,16 @@ public class AvailabilityInputActivity extends AppCompatActivity {
      * SETUP METHODS
      */
 
-    private void setupBackButton() {
-        Button backButton = (Button) findViewById(R.id.back_button);
-        backButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish();
-            }
-        });
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                // React to the user tapping the back/up icon in the action bar
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
     private void setupSaveButton() {
@@ -110,8 +113,11 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
         // Set up the tabs
         toolbar = (Toolbar) findViewById(R.id.toolbar);
+        String title = "Availability For: " + eventTitle;
+        toolbar.setTitle(title);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
         setupViewPager();
         setupTabs();
     }
@@ -205,10 +211,11 @@ public class AvailabilityInputActivity extends AppCompatActivity {
      * HELPER METHODS
      */
 
-    private void getDates() {
+    private void getData() {
         dates = new ArrayList<>();
 
         Intent prevIntent = getIntent();
+        eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
 
         if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
             // The user is coming from the CreateEventActivity. The dates are in the intent (not the database).
@@ -243,9 +250,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     }
 
     private String saveNewEvent() {
-        Intent prevIntent = getIntent();
-        String eventTitle = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_TITLE);
-
         String uid = DB.getMyUID();
         Firebase eventsRef = DB.getEventsRef();
 
