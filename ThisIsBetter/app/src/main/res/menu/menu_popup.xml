@@ -9,4 +9,8 @@
         android:id="@+id/edit_invites"
         android:title="Edit Invites"
         android:visible="true"/>
+    <item
+        android:id="@+id/delete_event"
+        android:title="Delete Event"
+        android:visible="true"/>
 </menu>

@@ -58,6 +58,22 @@ public class Event {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != this.getClass()) {
+            return false;
+        }
+        Event other = (Event)o;
+        if (!this.getTitle().equals(other.getTitle())) {
+            return false;
+        }
+        if (!this.getOwnerID().equals(other.getOwnerID())) {
+            return false;
+        }
+
+        return true;
+    }
+
     public void inviteByID(String id, boolean hasResponded) {
         if(!invitedHaveResponded.containsKey(id)) {
             invitedHaveResponded.put(id, hasResponded);

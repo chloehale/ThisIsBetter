@@ -34,4 +34,14 @@ public class User {
     public void setEmail(String email) {
         this.email = email;
     }
+
+    public int determineNumberUnrespondedInvitations() {
+        int numResponded = 0;
+        for(Map.Entry<String, Boolean> entry : eventsInvitedTo.entrySet()) {
+            if(entry.getValue()) {
+                numResponded++;
+            }
+        }
+        return numResponded;
+    }
 }

@@ -64,7 +64,7 @@ public class EventsInvitedFragment extends Fragment {
     }
 
     private void setUpListView(View rootView) {
-        // Create the firebase query that grabs all of the events I own.
+        // Create the firebase query that grabs all of the events I'm invited to.
         String uid = DB.getMyUID();
         Query queryRef = DB.getEventsRef().orderByChild(Event.INVITED_KEY + "/" + uid);
         queryRef.addChildEventListener(eventListener);

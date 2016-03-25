@@ -12,6 +12,8 @@ import android.widget.ImageButton;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import com.firebase.client.Firebase;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,6 +23,7 @@ import s3.thisisbetter.R;
 import s3.thisisbetter.activities.AvailabilityInputActivity;
 import s3.thisisbetter.activities.InviteActivity;
 import s3.thisisbetter.fragments.EventsInvitedFragment;
+import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
 
 /**
@@ -78,6 +81,9 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
                             case R.id.edit_invites:
                                 goToEditInvites(v, event);
                                 return true;
+                            case R.id.delete_event:
+                                deleteEvent(v, event);
+                                return true;
                         }
                         return false;
                     }
@@ -108,6 +114,20 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
             }
         }
         return eventID;
+    }
+
+    public void deleteEvent(View v, Event e) {
+        String eventID = getEventID(e);
+
+        for (int i = 0; i < values.size(); i++) {
+            if (e.equals(values.get(i))){
+                values.remove(i);
+                break;
+            }
+        }
+
+        Firebase eventRef = DB.getEventsRef().child(eventID);
+        eventRef.removeValue();
     }
 
     public void goToEditEvent(View v, Event e) {
