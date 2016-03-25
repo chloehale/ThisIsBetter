@@ -72,7 +72,6 @@ public class ViewResponseActivity extends AppCompatActivity {
         queryRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
-                System.out.println(snapshot.getValue());
                 Event event = snapshot.getValue(Event.class);
                 setTitleText(event.getTitle());
             }

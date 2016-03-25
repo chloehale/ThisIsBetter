@@ -258,7 +258,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         alertDialogBuilder.setTitle("Are You Sure?")
                 .setMessage("You haven't set any times that you're available. Are you really that busy?")
                 .setCancelable(false)
-                .setPositiveButton("Yes, I'm Never Available", new DialogInterface.OnClickListener() {
+                .setPositiveButton("Yes, I'm Never Free", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         saveTapped();
