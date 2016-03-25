@@ -119,15 +119,15 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
     public void deleteEvent(View v, Event e) {
         String eventID = getEventID(e);
 
-        for (int i = 0; i < values.size(); i++) {
-            if (e.equals(values.get(i))){
-                values.remove(i);
-                break;
-            }
-        }
-
+        // Remove the event from the database (this will call the onChildRemoved listener in
+        // EventsIOwnFragment which will remove the event from the array adapter)
         Firebase eventRef = DB.getEventsRef().child(eventID);
         eventRef.removeValue();
+
+        // Remove the associated dates from the database
+        for(String dateID : e.getProposedDateIDs().keySet()) {
+            DB.getDatesRef().child(dateID).removeValue();
+        }
     }
 
     public void goToEditEvent(View v, Event e) {

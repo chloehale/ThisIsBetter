@@ -265,11 +265,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         saveDatesForEvent(event, newEventID);
         newEventRef.setValue(event);
 
-        // Update the user so this event is in their eventsOwned data
-        Map<String, Object> addEventOwned = new HashMap<>();
-        addEventOwned.put(newEventID, true);
-        userRef.child("eventsOwned").updateChildren(addEventOwned);
-
         return newEventID;
     }
 
@@ -308,7 +303,6 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                             break;
                         }
                     }
-
                 }
             }
 
