@@ -34,18 +34,51 @@
             android:textColor="@color/colorLight"
             android:textStyle="bold"
             android:gravity="center"
+            android:textSize="16sp"
             android:text="" />
 
     </android.support.v7.widget.Toolbar>
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:layout_margin="@dimen/activity_vertical_margin"
-        android:color="#ffffff"
-        android:weightSum="1">
+    <ScrollView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginTop="@dimen/activity_vertical_margin">
 
+            <TextView
+                android:id="@+id/status_text_view"
+                android:layout_marginTop="8dp"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_vertical_margin_semi_wide"
+                android:textColor="@color/colorGrayDark"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:textSize="16sp"
+                android:text="" />
 
-    </LinearLayout>
+            <TextView
+                android:id="@+id/status_sub_text_view"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/activity_vertical_margin_semi_wide"
+                android:textColor="@color/colorGrayDark"
+                android:textStyle="italic"
+                android:textAlignment="center"
+                android:visibility="gone"
+                android:text="" />
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/response_lists"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:color="#ffffff"
+                android:weightSum="1">
+
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
 
 </LinearLayout>

@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="70dp"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:paddingLeft="16dp"
+    android:paddingRight="16dp"
+    android:background="#ffffff">
+
+
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/time_range"
+        android:layout_width="fill_parent"
+        android:layout_height="26dp"
+        android:layout_alignParentBottom="true"
+        android:singleLine="true"
+        android:textSize="16sp">
+    </TextView>
+
+    <TextView
+        android:id="@+id/date_info"
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:layout_above="@+id/time_range"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:gravity="center_vertical"
+        android:singleLine="false"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorGrayDark">
+    </TextView>
+
+    <TextView
+        android:id="@+id/response_ratio"
+        android:layout_width="wrap_content"
+        android:layout_height="fill_parent"
+        android:text="test"
+        android:textColor="@color/colorGrayDark"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentRight="true"
+        android:singleLine="false"
+        android:textSize="16sp"
+        />
+
+
+</RelativeLayout>

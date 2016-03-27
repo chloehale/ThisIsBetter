@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
@@ -16,10 +18,24 @@ import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
+import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
+import s3.thisisbetter.adapters.ViewResponseArrayAdapter;
+import s3.thisisbetter.model.AvailabilityBlock;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
+import s3.thisisbetter.model.TimeBlock;
 
 
 public class ViewResponseActivity extends AppCompatActivity {
@@ -27,6 +43,8 @@ public class ViewResponseActivity extends AppCompatActivity {
     private String parentType;
     private String eventID;
     private Toolbar toolbar;
+    private Map<Integer, List<AvailabilityBlock>> availabilityBlocks = new TreeMap<>(Collections.reverseOrder());
+    private int totalInvitedCount;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +63,7 @@ public class ViewResponseActivity extends AppCompatActivity {
         Intent intent = getIntent();
         parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
         eventID = intent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
-        getData();
+        getEventData();
 
         setupBackButton();
 
@@ -66,26 +84,129 @@ public class ViewResponseActivity extends AppCompatActivity {
         });
     }
 
-    private void getData() {
+    private void getEventData() {
 
         Query queryRef = DB.getEventsRef().child(eventID);
         queryRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Event event = snapshot.getValue(Event.class);
-                setTitleText(event.getTitle());
+                setTitleText(event);
+                setResponseStatusText(event);
+                getAvailabilityData(event);
             }
 
             @Override
             public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("The read failed: " + firebaseError.getMessage());
+                System.out.println("Failed to read event: " + firebaseError.getMessage());
             }
         });
     }
 
-    private void setTitleText(String eventTitle) {
+    private void getAvailabilityData(Event event) {
+
+        totalInvitedCount = event.getInvitedHaveResponded().size();
+        final Set<String> DATE_IDs = event.getProposedDateIDs().keySet();
+
+        if (totalInvitedCount > 1) {
+
+            Query queryRef = DB.getDatesRef();
+            queryRef.addValueEventListener(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+
+                    for (String dateID : DATE_IDs) {
+
+                        DataSnapshot dateSnapshot = dataSnapshot.child(dateID);
+                        TimeBlock timeBlock = dateSnapshot.getValue(TimeBlock.class);
+
+                        for (Map.Entry<String, Map<String, Boolean>> entry : timeBlock.getAvailability().entrySet()) {
+
+                            Set<String> userIDs = entry.getValue().keySet();
+
+                            Calendar calendar = Calendar.getInstance();
+                            calendar.set(timeBlock.getYear(), timeBlock.getMonth(), timeBlock.getDay());
+
+                            AvailabilityBlock availabilityBlock = new AvailabilityBlock(totalInvitedCount, calendar, timeBlock.getMonthString(), entry.getKey(), userIDs);
+
+                            if (availabilityBlocks.get(userIDs.size()) != null) {
+                                availabilityBlocks.get(userIDs.size()).add(availabilityBlock);
+                            } else {
+                                List<AvailabilityBlock> initialList = new ArrayList<>();
+                                initialList.add(availabilityBlock);
+                                availabilityBlocks.put(userIDs.size(), initialList);
+                            }
+                        }
+                    }
+                    setAvailabilityResponseList();
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {
+
+                }
+            });
+        }
+    }
+
+
+    private void setTitleText(Event event) {
         TextView title = (TextView) findViewById(R.id.title_text_view);
-        title.setText("Responses for \"" + eventTitle + "\"");
+        title.setText("Responses for \"" + event.getTitle() + "\"");
+    }
+
+    private void setResponseStatusText(Event event) {
+        int respondedCount = 0;
+        int totalCount = event.getInvitedHaveResponded().size();
+
+        for (Boolean responded : event.getInvitedHaveResponded().values()) {
+            if (responded)
+                respondedCount++;
+        }
+
+        TextView responseStatusTitle = (TextView) findViewById(R.id.status_text_view);
+        if (totalCount == 1) {
+            responseStatusTitle.setText("You are the only member of this event");
+            TextView subStatusText = (TextView) findViewById(R.id.status_sub_text_view);
+            subStatusText.setVisibility(View.VISIBLE);
+            subStatusText.setText("Invite some people to view their responses");
+        }
+        else if (totalCount == respondedCount) {
+            responseStatusTitle.setText("Everyone has responded");
+            responseStatusTitle.setTextColor(this.getResources().getColor(R.color.colorPrimaryDark));
+        }
+        else
+            responseStatusTitle.setText(respondedCount + " out of " + totalCount + " have responded");
+    }
+
+
+    private void setAvailabilityResponseList() {
+
+        LinearLayout responseListLayout = (LinearLayout) findViewById(R.id.response_lists);
+
+        for (Map.Entry<Integer, List<AvailabilityBlock>> entry : availabilityBlocks.entrySet()) {
+            TextView responseRatio = new TextView(this);
+            responseRatio.setText(entry.getKey() + "/" + totalInvitedCount + " Available");
+            responseRatio.setTextColor(this.getResources().getColor(R.color.colorGrayDark));
+            responseRatio.setTextSize(16);
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            params.setMargins(32, 32, 0, 16);
+            responseRatio.setLayoutParams(params);
+            responseRatio.setId(entry.getKey());
+            responseListLayout.addView(responseRatio);
+
+            ListView availabilityListView = new ListView(this);
+            ViewResponseArrayAdapter adapter = new ViewResponseArrayAdapter(responseListLayout.getContext(), entry.getValue());
+            availabilityListView.setAdapter(adapter);
+            availabilityListView.setScrollContainer(false);
+
+            LinearLayout.LayoutParams listParams = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+            listParams.height = 110 * entry.getValue().size();
+            availabilityListView.setLayoutParams(listParams);
+            responseListLayout.addView(availabilityListView);
+
+        }
     }
 
 }
