@@ -17,6 +17,7 @@ import com.prolificinteractive.materialcalendarview.MaterialCalendarView;
 import com.prolificinteractive.materialcalendarview.OnDateSelectedListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import s3.thisisbetter.AppConstants;
@@ -72,6 +73,9 @@ public class CreateEventActivity extends AppCompatActivity {
                 enableNextButton(dates.size() > 0);
             }
         });
+        Calendar c = Calendar.getInstance();
+        mCalView.setMinimumDate(c);
+        mCalView.setShowOtherDates(MaterialCalendarView.SHOW_OUT_OF_RANGE);
     }
 
     private void goToNextActivity() {
