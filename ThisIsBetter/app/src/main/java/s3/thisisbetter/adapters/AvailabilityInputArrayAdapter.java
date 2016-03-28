@@ -49,22 +49,40 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
         TextView text = (TextView) rowView.findViewById(R.id.time_text);
         text.setText(values.get(position));
 
-        int numAvailable = timeBlock.calculateNumberOfPeopleAvailableAtTime(position);
-        TextView availabilityText = (TextView) rowView.findViewById(R.id.availability_text);
-        if (numAvailable > 0) {
-            availabilityText.setText(numAvailable + " available");
-        } else {
-            availabilityText.setText("");
-        }
-
         if (timeBlock.isAvailableAtTime(position)) {
             rowView.setBackgroundResource(R.color.colorSelected);
+            setNumAvailableText(true, position, rowView);
         }
         else {
             rowView.setBackgroundResource(R.color.colorLight);
+            setNumAvailableText(false, position, rowView);
         }
 
         return rowView;
+    }
+
+    private void setNumAvailableText(boolean userIsAvailable, int position, View rowView) {
+        int numAvailable = timeBlock.calculateNumberOfPeopleAvailableAtTime(position);
+
+        TextView availabilityText = (TextView) rowView.findViewById(R.id.availability_text);
+
+        if (numAvailable == 0) {
+            availabilityText.setText("");
+        }  else if (numAvailable == 1) {
+            if(userIsAvailable) {
+                availabilityText.setText("You are available");
+            } else {
+                availabilityText.setText("1 person available");
+            }
+        } else {
+            if(userIsAvailable) {
+                int others = numAvailable - 1;
+                String addS = others > 1 ? "s" : "";
+                availabilityText.setText("You and " + others + " other" + addS + " available");
+            } else {
+                availabilityText.setText(numAvailable + " people available");
+            }
+        }
     }
 
 }
