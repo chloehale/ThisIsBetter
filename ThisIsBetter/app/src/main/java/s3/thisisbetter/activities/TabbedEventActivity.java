@@ -139,7 +139,7 @@ public class TabbedEventActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 2 total pages.
-            return 3;
+            return 2;
         }
 
         @Override
@@ -149,8 +149,6 @@ public class TabbedEventActivity extends AppCompatActivity {
                     return "Events I Own";
                 case 1:
                     return "Invitations";
-                case 2:
-                    return "Settings";
             }
             return null;
         }

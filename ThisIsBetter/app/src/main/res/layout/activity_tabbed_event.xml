@@ -23,10 +23,13 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <ImageButton
+                android:id="@+id/settings_button"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_edit"
+                android:layout_height="fill_parent"
+                android:src="@drawable/ic_action_navigation_more_vert"
                 android:contentDescription="settings"
+                android:background="@null"
+                android:layout_gravity="right"
                 android:onClick="showPopup" />
 
         </android.support.v7.widget.Toolbar>
