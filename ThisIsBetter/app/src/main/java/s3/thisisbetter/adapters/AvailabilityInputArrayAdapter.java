@@ -22,7 +22,7 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
     private TimeBlock timeBlock;
 
     public AvailabilityInputArrayAdapter(Context context, ArrayList<String> values, TimeBlock timeBlock) {
-        super(context, R.layout.cell_event_invited_view, values);
+        super(context, R.layout.cell_event_basic, values);
         this.context = context;
         this.values = values;
         this.timeBlock = timeBlock;

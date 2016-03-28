@@ -107,8 +107,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
         // Set up the tabs
         toolbar = (Toolbar) findViewById(R.id.toolbar);
-        String title = "Availability For: " + eventTitle;
-        toolbar.setTitle(title);
+        toolbar.setTitle(eventTitle);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

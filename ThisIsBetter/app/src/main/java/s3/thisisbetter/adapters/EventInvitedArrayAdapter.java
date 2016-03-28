@@ -32,7 +32,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
 
 
     public EventInvitedArrayAdapter(Context context, ArrayList<Event> values) {
-        super(context, R.layout.cell_event_invited_view, values);
+        super(context, R.layout.cell_event_basic, values);
         this.context = context;
         this.values = values;
         this.uidToEmail = new HashMap<>();
@@ -47,7 +47,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
         final View rowView;
         if(haveResponded) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.cell_event_owned_view, parent, false);
+            rowView = inflater.inflate(R.layout.cell_event_with_button, parent, false);
 
             ImageButton editButton = (ImageButton) rowView.findViewById(R.id.edit_icon);
             editButton.setOnClickListener(new View.OnClickListener() {
@@ -65,22 +65,22 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
             });
         } else {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.cell_event_invited_view, parent, false);
+            rowView = inflater.inflate(R.layout.cell_event_basic, parent, false);
         }
 
         TextView eventTitleView = (TextView) rowView.findViewById(R.id.first_line);
         TextView detailsView = (TextView) rowView.findViewById(R.id.second_line);
+        TextView respondedView = (TextView) rowView.findViewById(R.id.third_line);
 
         eventTitleView.setText(event.getTitle());
         eventTitleView.setTextColor(Color.DKGRAY);
 
         String ownerDescription = "Owned By: " + uidToEmail.get(event.getOwnerID());
-        if(haveResponded) {
-            ownerDescription += ", You've Responded To This Event";
-        }
         detailsView.setText(ownerDescription);
 
-
+        if(haveResponded && respondedView != null) {
+            respondedView.setText("You've Responded To This Invitation");
+        }
 
         return rowView;
     }
