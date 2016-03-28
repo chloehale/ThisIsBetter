@@ -1,8 +1,10 @@
 package s3.thisisbetter.adapters;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +24,7 @@ import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.activities.AvailabilityInputActivity;
 import s3.thisisbetter.activities.InviteActivity;
+import s3.thisisbetter.fragments.EventsIOwnFragment;
 import s3.thisisbetter.fragments.EventsInvitedFragment;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
@@ -51,6 +54,8 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
         } else {
             rowView = convertView;
         }
+
+
 
         TextView eventTitleView = (TextView) rowView.findViewById(R.id.first_line);
         TextView numRespondedView = (TextView) rowView.findViewById(R.id.second_line);
@@ -116,18 +121,44 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
         return eventID;
     }
 
-    public void deleteEvent(View v, Event e) {
-        String eventID = getEventID(e);
+    public void deleteEvent(View v, final Event e) {
+        final String eventID = getEventID(e);
 
-        // Remove the event from the database (this will call the onChildRemoved listener in
-        // EventsIOwnFragment which will remove the event from the array adapter)
-        Firebase eventRef = DB.getEventsRef().child(eventID);
-        eventRef.removeValue();
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
+                getContext());
+        alertDialogBuilder
+                .setTitle("Are you sure?")
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
 
-        // Remove the associated dates from the database
-        for(String dateID : e.getProposedDateIDs().keySet()) {
-            DB.getDatesRef().child(dateID).removeValue();
-        }
+                        // Remove the event from the database (this will call the onChildRemoved listener in
+                        // EventsIOwnFragment which will remove the event from the array adapter)
+                        Firebase eventRef = DB.getEventsRef().child(eventID);
+                        eventRef.removeValue();
+
+                        // Remove the associated dates from the database
+                        for(String dateID : e.getProposedDateIDs().keySet()) {
+                            DB.getDatesRef().child(dateID).removeValue();
+                        }
+
+
+                    }
+                })
+                .setNegativeButton("Cancel",
+                    new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int id) {
+                            dialog.cancel();
+
+                        }
+                    });
+
+        // create alert dialog
+        AlertDialog alertDialog = alertDialogBuilder.create();
+
+        // show it
+        alertDialog.show();
+
     }
 
     public void goToEditEvent(View v, Event e) {
