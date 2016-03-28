@@ -25,11 +25,12 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/Invite_Text"
+                android:text=""
                 android:textSize="22sp"
                 android:padding="25dp"
                 android:layout_gravity="center"
                 android:id="@+id/invite_text"
+                android:textAlignment="center"
                 android:textColor="#FFFFFF" />
 
 

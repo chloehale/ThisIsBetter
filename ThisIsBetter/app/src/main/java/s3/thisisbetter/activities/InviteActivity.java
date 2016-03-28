@@ -13,6 +13,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -35,6 +36,7 @@ public class InviteActivity extends AppCompatActivity {
     private InviteArrayAdapter adapter;
     private ListView listView;
     private String eventID;
+    private String eventTitle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +48,8 @@ public class InviteActivity extends AppCompatActivity {
         Intent prevIntent = getIntent();
         eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
 
+        setEventTitle();
+
         setupListView();
         setupFAB();
 
@@ -55,6 +59,23 @@ public class InviteActivity extends AppCompatActivity {
             public void onClick(View view) {
                 saveInvites();
                 goToHomeScreen();
+            }
+        });
+    }
+
+    private void setEventTitle() {
+        Query eventRef = DB.getEventsRef().child(eventID).child(Event.TITLE_KEY);
+        eventRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                eventTitle = dataSnapshot.getValue(String.class);
+                TextView inviteText = (TextView) findViewById(R.id.invite_text);
+                inviteText.setText("Invite others to \"" + eventTitle + "\"");
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {
+                System.out.println("Error setting up title text");
             }
         });
     }
