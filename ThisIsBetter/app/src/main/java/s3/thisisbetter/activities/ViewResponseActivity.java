@@ -43,7 +43,7 @@ public class ViewResponseActivity extends AppCompatActivity {
     private String parentType;
     private String eventID;
     private Toolbar toolbar;
-    private Map<Integer, List<AvailabilityBlock>> availabilityBlocks = new TreeMap<>(Collections.reverseOrder());
+    private Map<Integer, List<AvailabilityBlock>> availabilityBlocks;
     private int totalInvitedCount;
 
     @Override
@@ -115,6 +115,11 @@ public class ViewResponseActivity extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
+                    //reset and clear out all views
+                    availabilityBlocks = new TreeMap<>(Collections.reverseOrder());
+                    LinearLayout responseListLayout = (LinearLayout) findViewById(R.id.response_lists);
+                    responseListLayout.removeAllViews();
+
                     for (String dateID : DATE_IDs) {
 
                         DataSnapshot dateSnapshot = dataSnapshot.child(dateID);
@@ -165,26 +170,33 @@ public class ViewResponseActivity extends AppCompatActivity {
         }
 
         TextView responseStatusTitle = (TextView) findViewById(R.id.status_text_view);
+        TextView subStatusText = (TextView) findViewById(R.id.status_sub_text_view);
         if (totalCount == 1) {
             responseStatusTitle.setText("You are the only member of this event");
-            TextView subStatusText = (TextView) findViewById(R.id.status_sub_text_view);
             subStatusText.setVisibility(View.VISIBLE);
             subStatusText.setText("Invite some people to view their responses");
         }
         else if (totalCount == respondedCount) {
+            subStatusText.setVisibility(View.GONE);
             responseStatusTitle.setText("Everyone has responded");
             responseStatusTitle.setTextColor(this.getResources().getColor(R.color.colorPrimaryDark));
         }
-        else
+        else {
+            subStatusText.setVisibility(View.GONE);
             responseStatusTitle.setText(respondedCount + " out of " + totalCount + " have responded");
+        }
     }
 
 
     private void setAvailabilityResponseList() {
 
         LinearLayout responseListLayout = (LinearLayout) findViewById(R.id.response_lists);
+        boolean responsePresent = false;
 
         for (Map.Entry<Integer, List<AvailabilityBlock>> entry : availabilityBlocks.entrySet()) {
+
+            responsePresent = true;
+
             TextView responseRatio = new TextView(this);
             responseRatio.setText(entry.getKey() + "/" + totalInvitedCount + " Available");
             responseRatio.setTextColor(this.getResources().getColor(R.color.colorGrayDark));
@@ -206,6 +218,15 @@ public class ViewResponseActivity extends AppCompatActivity {
             availabilityListView.setLayoutParams(listParams);
             responseListLayout.addView(availabilityListView);
 
+        }
+
+        TextView subStatusText = (TextView) findViewById(R.id.status_sub_text_view);
+        if (!responsePresent) {
+            subStatusText.setVisibility(View.VISIBLE);
+            subStatusText.setText("No one who responded was ever available");
+        }
+        else {
+            subStatusText.setVisibility(View.GONE);
         }
     }
 
