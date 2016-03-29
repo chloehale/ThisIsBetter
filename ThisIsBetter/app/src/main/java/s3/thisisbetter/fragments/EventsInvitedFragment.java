@@ -59,7 +59,7 @@ public class EventsInvitedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events_invited, container, false);
-        noInvitesText = (TextView) rootView.findViewById(R.id.noEventsText);
+        noInvitesText = (TextView) rootView.findViewById(R.id.noInvitesText);
 
         setUpListView(rootView);
 
@@ -96,11 +96,6 @@ public class EventsInvitedFragment extends Fragment {
     private ChildEventListener eventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            numInvites++;
-            if (numInvites == 1) {
-
-                noInvitesText.setVisibility(View.INVISIBLE);
-            }
 
             final Event e = dataSnapshot.getValue(Event.class);
             String ownerUID = e.getOwnerID();
@@ -109,6 +104,11 @@ public class EventsInvitedFragment extends Fragment {
             // The invited tab doesn't show any events you own or events that you aren't invited to
             if(ownerUID.equals(myUID)) { return; }
             if(!e.getInvitedHaveResponded().containsKey(myUID)) { return; }
+            numInvites++;
+            if (numInvites == 1) {
+
+                noInvitesText.setVisibility(View.INVISIBLE);
+            }
 
             final String eventID = dataSnapshot.getKey();
 
