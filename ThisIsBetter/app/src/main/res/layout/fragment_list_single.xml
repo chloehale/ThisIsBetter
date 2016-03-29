@@ -15,4 +15,16 @@ android:padding="6dp" >
     android:singleLine="false"
     android:textSize="24sp" />
 
+<ImageButton
+    android:id="@+id/delete_button"
+    android:layout_width="wrap_content"
+    android:layout_height="fill_parent"
+    android:src="@drawable/ic_action_navigation_close"
+    android:contentDescription="delete"
+    android:background="@null"
+    android:layout_gravity="right"
+    android:onClick="showAlertDialog"
+    android:layout_alignParentBottom="true"
+    android:layout_alignParentEnd="true" />
+
 </RelativeLayout>
