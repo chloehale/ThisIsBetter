@@ -3,6 +3,7 @@ package s3.thisisbetter.adapters;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.provider.ContactsContract;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.model.DB;
+import s3.thisisbetter.model.Event;
 import s3.thisisbetter.model.TimeBlock;
 
 /**
@@ -39,43 +41,91 @@ public class InviteArrayAdapter extends ArrayAdapter<String> {
         this.values = values;
     }
 
-    private void openAlert(final int position)
-    {
+    private void removeUsersResponses(String eventID, final String userID) {
+        Query datesWithEventIDQuery = DB.getDatesRef().orderByChild(TimeBlock.EVENT_ID_KEY).equalTo(eventID);
+
+        datesWithEventIDQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot date : dataSnapshot.getChildren()) {
+                    Firebase dateRef = DB.getDatesRef().child(date.getKey());
+                    //Query datesWithEventIDQuery = dateRef.child("availability");
+
+                    for (DataSnapshot timeBlock : date.child("availability").getChildren())
+                    {
+                        for (DataSnapshot userInvited : timeBlock.getChildren()) {
+                            if (userInvited.getKey() == userID) {
+                                Firebase invitedUserRef = dateRef.child("availability").child(timeBlock.getKey()).child(userInvited.getKey());
+                                invitedUserRef.removeValue();
+                            }
+                        }
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) { }
+        });
+    }
+
+    private void openAlert(final int position) {
+
+        final String email = values.get(position);
+
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
         alertDialogBuilder
                 .setTitle("Are you sure?")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        //values.remove(position);
-                    /*
-                        Intent prevIntent = getIntent();
-                        String eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
-                        Query eventQuery = DB.getEventsRef().orderByChild(TimeBlock.EVENT_ID_KEY).equalTo(eventID);
+                        values.remove(position);
+                        InviteArrayAdapter.this.remove(email);
 
-                        eventQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                        Intent prevIntent = context.getIntent();
+                        final String eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
+                        Query invitedUsersQuery = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY);
+
+                        invitedUsersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                for(DataSnapshot dateData : dataSnapshot.getChildren()) {
-                                    TimeBlock date = dateData.getValue(TimeBlock.class);
+                                for(final DataSnapshot invitedData : dataSnapshot.getChildren()) {
+                                    final String invitedUserID = invitedData.getKey();
 
-                                    for(TimeBlock updatedDate : dates) {
-                                        if(updatedDate.getDay() == date.getDay() &&
-                                                updatedDate.getMonth() == date.getMonth() &&
-                                                updatedDate.getYear() == date.getYear()) {
+                                    Query allUsersQuery = DB.getUsersRef();
+                                    allUsersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                            for(DataSnapshot userData : dataSnapshot.getChildren()) {
+                                                String emailUser = (String)userData.child("email").getValue();
+                                                String invitedUserIDClicked = userData.getKey();
 
-                                            Firebase dateRef = DB.getDatesRef().child(dateData.getKey());
-                                            dateRef.setValue(updatedDate);
-                                            break;
+                                                if (email.equals(emailUser))
+                                                {
+                                                    if (invitedUserID == invitedUserIDClicked) {
+                                                        Firebase invitedUserRef = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY).child(invitedUserID);
+                                                        boolean hasRespondedAlready = (boolean) invitedData.getValue();
+                                                        invitedUserRef.removeValue();
+                                                        if (hasRespondedAlready) {
+                                                            removeUsersResponses(eventID, invitedUserID);
+                                                            return;
+                                                        }
+                                                    }
+                                                }
+
+                                            }
                                         }
-                                    }
+
+                                        @Override
+                                        public void onCancelled(FirebaseError firebaseError) { }
+                                    });
+
                                 }
                             }
 
                             @Override
                             public void onCancelled(FirebaseError firebaseError) { }
                         });
-                    */
+
                     }
                 })
                 .setNegativeButton("Cancel",
