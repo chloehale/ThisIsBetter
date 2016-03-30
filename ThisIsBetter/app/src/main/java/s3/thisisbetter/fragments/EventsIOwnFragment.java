@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -36,6 +37,8 @@ public class EventsIOwnFragment extends Fragment {
     public final static String PARENT_TYPE = "events_i_own";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private EventOwnedArrayAdapter adapter;
+    private int numEventsOwned = 0;
+    private TextView noEventsText;
 
     public EventsIOwnFragment() { }
 
@@ -55,7 +58,7 @@ public class EventsIOwnFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events_i_own, container, false);
-
+        noEventsText = (TextView) rootView.findViewById(R.id.noEventsText);
         setUpListView(rootView);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
@@ -100,6 +103,11 @@ public class EventsIOwnFragment extends Fragment {
     private ChildEventListener eventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            numEventsOwned++;
+            if (numEventsOwned == 1) {
+
+                noEventsText.setVisibility(View.INVISIBLE);
+            }
             Event e = dataSnapshot.getValue(Event.class);
             adapter.addEvent(e, dataSnapshot.getKey());
         }
@@ -112,6 +120,12 @@ public class EventsIOwnFragment extends Fragment {
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
+            numEventsOwned--;
+            if (numEventsOwned == 0)
+            {
+                noEventsText.setVisibility(View.VISIBLE);
+            }
+
             Event e = dataSnapshot.getValue(Event.class);
             adapter.deleteEvent(e);
         }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -38,7 +39,8 @@ public class EventsInvitedFragment extends Fragment {
     private static final String ARG_SECTION_NUMBER = "section_number";
     public final static String PARENT_TYPE = "invitation_tab";
     private EventInvitedArrayAdapter adapter;
-
+    private int numInvites = 0;
+    private TextView noInvitesText;
 
     public EventsInvitedFragment() { }
 
@@ -58,6 +60,7 @@ public class EventsInvitedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events_invited, container, false);
+        noInvitesText = (TextView) rootView.findViewById(R.id.noInvitesText);
 
         setUpListView(rootView);
 
@@ -103,6 +106,7 @@ public class EventsInvitedFragment extends Fragment {
     private ChildEventListener eventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
             final Event e = dataSnapshot.getValue(Event.class);
             String ownerUID = e.getOwnerID();
             String myUID = DB.getMyUID();
@@ -110,6 +114,11 @@ public class EventsInvitedFragment extends Fragment {
             // The invited tab doesn't show any events you own or events that you aren't invited to
             if(ownerUID.equals(myUID)) { return; }
             if(!e.getInvitedHaveResponded().containsKey(myUID)) { return; }
+            numInvites++;
+            if (numInvites == 1) {
+
+                noInvitesText.setVisibility(View.INVISIBLE);
+            }
 
             final String eventID = dataSnapshot.getKey();
 
@@ -136,7 +145,14 @@ public class EventsInvitedFragment extends Fragment {
         }
 
         @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {}
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            numInvites--;
+            if (numInvites == 0)
+            {
+                noInvitesText.setVisibility(View.VISIBLE);
+            }
+
+        }
 
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {}

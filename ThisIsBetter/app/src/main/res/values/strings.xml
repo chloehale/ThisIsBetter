@@ -32,6 +32,4 @@
     <string name="FinishButtonMessage">You can always change this later.</string>
     <string name="FinishButtonLabel">FINISH</string>
 
-    <color name="divider_grey">#D0D0D0</color>
-
 </resources>
