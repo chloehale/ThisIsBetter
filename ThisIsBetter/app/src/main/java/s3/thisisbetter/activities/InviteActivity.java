@@ -118,7 +118,22 @@ public class InviteActivity extends AppCompatActivity {
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
 
         @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {}
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            /*
+            String uid = dataSnapshot.getKey();
+            Firebase userRef = DB.getUsersRef().child(uid).child(User.EMAIL_KEY);
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    String email = (String) dataSnapshot.getValue();
+                    adapter.remove(email);
+                }
+
+                @Override
+                public void onCancelled(FirebaseError firebaseError) {}
+            });
+            */
+        }
 
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
