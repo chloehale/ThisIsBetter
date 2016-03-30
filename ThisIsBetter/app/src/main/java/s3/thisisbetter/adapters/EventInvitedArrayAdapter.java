@@ -50,6 +50,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
             rowView = inflater.inflate(R.layout.cell_event_with_button, parent, false);
 
             ImageButton editButton = (ImageButton) rowView.findViewById(R.id.edit_icon);
+            editButton.setFocusable(false);
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

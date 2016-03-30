@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.activities.AvailabilityInputActivity;
+import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.adapters.EventInvitedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
@@ -83,12 +84,21 @@ public class EventsInvitedFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Event e = adapter.getItem(position);
                 String eventID = adapter.getEventID(e);
+                boolean haveResponded = e.getInvitedHaveResponded().get(DB.getMyUID());
 
-                Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
-                intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
-                intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-                intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
-                startActivity(intent);
+                if (!haveResponded) {
+                    Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
+                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                    intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
+                    startActivity(intent);
+                }
+                else {
+                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
+                    startActivity(intent);
+                }
             }
         });
     }
