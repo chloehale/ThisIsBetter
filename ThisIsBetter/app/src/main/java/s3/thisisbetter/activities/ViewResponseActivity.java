@@ -1,14 +1,19 @@
 package s3.thisisbetter.activities;
 
+import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -32,6 +37,7 @@ import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
 import s3.thisisbetter.adapters.ViewResponseArrayAdapter;
+import s3.thisisbetter.dialogs.ViewResponseDialog;
 import s3.thisisbetter.model.AvailabilityBlock;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
@@ -216,6 +222,9 @@ public class ViewResponseActivity extends AppCompatActivity {
             LinearLayout.LayoutParams listParams = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
             listParams.height = 110 * entry.getValue().size();
             availabilityListView.setLayoutParams(listParams);
+
+            setUpListClickListener(availabilityListView);
+
             responseListLayout.addView(availabilityListView);
 
         }
@@ -228,6 +237,23 @@ public class ViewResponseActivity extends AppCompatActivity {
         else {
             subStatusText.setVisibility(View.GONE);
         }
+    }
+
+    private void setUpListClickListener(ListView listView) {
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                ViewResponseArrayAdapter adapter = (ViewResponseArrayAdapter)parent.getAdapter();
+                AvailabilityBlock availabilityBlock = adapter.getItem(position);
+                createDialog(availabilityBlock);
+            }
+        });
+    }
+
+    private void createDialog(AvailabilityBlock availabilityBlock) {
+        FragmentManager fm = getSupportFragmentManager();
+        ViewResponseDialog overlay = new ViewResponseDialog();
+        overlay.show(fm, "FragmentDialog");
     }
 
 }
