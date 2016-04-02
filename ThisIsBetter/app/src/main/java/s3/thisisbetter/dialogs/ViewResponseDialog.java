@@ -8,21 +8,39 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
+import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.TextView;
+
+import java.util.Set;
 
 import s3.thisisbetter.R;
 import s3.thisisbetter.activities.TabbedEventActivity;
 import s3.thisisbetter.fragments.DialogTabFragment;
+import s3.thisisbetter.model.AvailabilityBlock;
 import s3.thisisbetter.tabs.SlidingTabLayout;
 
 public class ViewResponseDialog extends DialogFragment {
 
     private DialogSectionsPagerAdapter sectionsPagerAdapter;
     private ViewPager viewPager;
+    private AvailabilityBlock availabilityBlock;
+
+    public static ViewResponseDialog newInstance(AvailabilityBlock availabilityBlock) {
+        ViewResponseDialog dialogFragment = new ViewResponseDialog();
+        dialogFragment.setAvailabilityBlock(availabilityBlock);
+
+        return dialogFragment;
+    }
+
+    public void setAvailabilityBlock(AvailabilityBlock availabilityBlock) {
+        this.availabilityBlock = availabilityBlock;
+    }
 
     @Override
     public Dialog onCreateDialog(final Bundle savedInstanceState)
@@ -39,7 +57,7 @@ public class ViewResponseDialog extends DialogFragment {
         View view = inflater.inflate(R.layout.dialog_view_response, container);
 
         // tab slider
-        sectionsPagerAdapter = new DialogSectionsPagerAdapter(getChildFragmentManager());
+        sectionsPagerAdapter = new DialogSectionsPagerAdapter(getChildFragmentManager(), availabilityBlock);
 
         // Set up the ViewPager with the sections adapter.
         viewPager = (ViewPager)view.findViewById(R.id.pager_tab_strip);
@@ -49,15 +67,43 @@ public class ViewResponseDialog extends DialogFragment {
         slidingTabLayout.setViewPager(viewPager);
         slidingTabLayout.setDistributeEvenly(true);
 
+        TextView dialogDate = (TextView) view.findViewById(R.id.dialog_date);
+        dialogDate.setText(availabilityBlock.getWeekday() + ", " + availabilityBlock.getMonthDay());
+
+        TextView dialogTime = (TextView) view.findViewById(R.id.dialog_time);
+        dialogTime.setText(availabilityBlock.getTimeRange());
+
+        Button okButton = (Button) view.findViewById(R.id.dialog_ok);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+            }
+        });
+
+        Button cancelButton = (Button) view.findViewById(R.id.dialog_cancel);
+        cancelButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dismissDialog();
+            }
+        });
+
         return view;
     }
 
+    private void dismissDialog() {
+        dismiss();
+    }
 
-    public class DialogSectionsPagerAdapter extends FragmentPagerAdapter
-    {
 
-        public DialogSectionsPagerAdapter(FragmentManager fm) {
+    public class DialogSectionsPagerAdapter extends FragmentPagerAdapter {
+
+        private AvailabilityBlock availabilityBlock;
+
+        public DialogSectionsPagerAdapter(FragmentManager fm, AvailabilityBlock availabilityBlock) {
             super(fm);
+            this.availabilityBlock = availabilityBlock;
         }
 
         @Override
@@ -65,20 +111,17 @@ public class ViewResponseDialog extends DialogFragment {
             if (position == 0)
             {
                 // find first fragment...
-                DialogTabFragment ft1 = new DialogTabFragment();
-                return ft1;
+                return DialogTabFragment.newInstance(availabilityBlock.getAvailableUserIds(), DialogTabFragment.AVAILABLE);
             }
             if (position == 1)
             {
                 // find first fragment...
-                DialogTabFragment ft2 = new DialogTabFragment();
-                return ft2;
+                return DialogTabFragment.newInstance(availabilityBlock.getNotAvailableUserIds(), DialogTabFragment.NOT_AVAILABLE);
             }
             else if (position == 2)
             {
                 // find first fragment...
-                DialogTabFragment ft3 = new DialogTabFragment();
-                return ft3;
+                return DialogTabFragment.newInstance(availabilityBlock.getNotRespondedUserIds(), DialogTabFragment.NOT_RESPONDED);
             }
 
             return null;
@@ -98,7 +141,7 @@ public class ViewResponseDialog extends DialogFragment {
                 case 1:
                     return "UNAVAILABLE";
                 case 2:
-                    return "NOT RESPONDED";
+                    return "RESPONDING";
             }
             return null;
         }

@@ -1,27 +1,97 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <s3.thisisbetter.tabs.SlidingTabLayout
-        android:id="@+id/sliding_tabs"
+    <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <TextView
+            android:id="@+id/dialog_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorLight"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:singleLine="true"
+            android:elevation="4dp"
+            android:text=""
+            android:paddingTop="@dimen/activity_vertical_margin"
+            android:background="@color/colorPrimary"/>
+
+        <TextView
+            android:id="@+id/dialog_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/colorLight"
+            android:textStyle="italic"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:singleLine="true"
+            android:text=""
+            android:elevation="4dp"
+            android:background="@color/colorPrimary"/>
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            android:theme="@style/ViewResponseToolbar"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+                <s3.thisisbetter.tabs.SlidingTabLayout
+                    android:id="@+id/sliding_tabs"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorPrimary"
+                    android:layout_gravity="center_horizontal"
+                    />
+            </LinearLayout>
+
+        </android.support.v7.widget.Toolbar>
+
+        <android.support.v4.view.ViewPager
+            android:id="@+id/pager_tab_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="@color/colorGrayLight"
+            android:paddingBottom="4dp"
+            android:paddingTop="4dp"
+            android:textColor="#fff"/>
+
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/dialog_ok"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
-        />
+        android:layout_width="wrap_content"
+        android:text="OK"
+        android:background="@null"
+        android:textColor="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/pager_tab_strip"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/dialog_cancel"
         android:layout_height="wrap_content"
-        android:layout_gravity="top"
-        android:background="@color/colorGrayLight"
-        android:paddingBottom="4dp"
-        android:paddingTop="4dp"
-        android:textColor="#fff"/>
+        android:layout_width="wrap_content"
+        android:text="CANCEL"
+        android:background="@null"
+        android:textColor="@color/colorPrimary"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/dialog_ok" />
 
-
-
-</LinearLayout>
+</RelativeLayout>

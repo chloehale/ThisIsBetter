@@ -3,6 +3,7 @@ package s3.thisisbetter.model;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Set;
+import java.util.TreeSet;
 
 /**
  * Created by steve on 3/25/16.
@@ -16,17 +17,28 @@ public class AvailabilityBlock {
     private String month;
     private String timeRange;
 
-    private Set<String> userIDs;
+    private Set<String> availableUserIds;
+    private Set<String> notAvailableUserIds;
+    private Set<String> notRespondedUserIds;
 
-    public AvailabilityBlock(int totalInvitedCount, Calendar calendar, String month, String time, Set<String> userIDs) {
-        this.availableCount = userIDs.size();
+    public AvailabilityBlock(int totalInvitedCount, Calendar calendar, String month, String time, Set<String> availableUserIds,
+                             Set<String> respondedUserIds, Set<String> notRespondedUserIds) {
+
+        this.availableCount = availableUserIds.size();
         this.totalInvitedCount = totalInvitedCount;
         this.weekday = this.convertToWeekdayString(calendar);
         this.day = calendar.get(Calendar.DAY_OF_MONTH);
         this.month = month;
         this.timeRange = this.convertToTimeRange(time);
 
-        this.userIDs = userIDs;
+        this.availableUserIds = availableUserIds;
+
+        //of the responded user ids, remove those that are available,
+        //which leaves you with the not available user ids who have responded
+        this.notAvailableUserIds = new TreeSet<>(respondedUserIds);
+        this.notAvailableUserIds.removeAll(availableUserIds);
+
+        this.notRespondedUserIds = notRespondedUserIds;
 
     }
 
@@ -48,6 +60,18 @@ public class AvailabilityBlock {
 
     public int getTotalInvitedCount() {
         return totalInvitedCount;
+    }
+
+    public Set<String> getAvailableUserIds() {
+        return availableUserIds;
+    }
+
+    public Set<String> getNotAvailableUserIds() {
+        return notAvailableUserIds;
+    }
+
+    public Set<String> getNotRespondedUserIds() {
+        return notRespondedUserIds;
     }
 
     private String convertToWeekdayString(Calendar calendar) {

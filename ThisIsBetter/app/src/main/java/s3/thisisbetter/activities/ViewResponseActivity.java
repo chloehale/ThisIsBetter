@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
@@ -114,6 +115,19 @@ public class ViewResponseActivity extends AppCompatActivity {
         totalInvitedCount = event.getInvitedHaveResponded().size();
         final Set<String> DATE_IDs = event.getProposedDateIDs().keySet();
 
+        //separate into sets of individuals who have and haven't responded
+        Map<String, Boolean> invitedHaveResponded = event.getInvitedHaveResponded();
+        final Set<String> respondedUserIds = new TreeSet<>();
+        final Set<String> notRespondedUserIds = new TreeSet<>();
+
+        for (Map.Entry<String, Boolean> entry : invitedHaveResponded.entrySet()) {
+            if (entry.getValue())
+                respondedUserIds.add(entry.getKey());
+            else
+                notRespondedUserIds.add(entry.getKey());
+        }
+
+        //query for dates and build availability blocks
         if (totalInvitedCount > 1) {
 
             Query queryRef = DB.getDatesRef();
@@ -133,19 +147,20 @@ public class ViewResponseActivity extends AppCompatActivity {
 
                         for (Map.Entry<String, Map<String, Boolean>> entry : timeBlock.getAvailability().entrySet()) {
 
-                            Set<String> userIDs = entry.getValue().keySet();
+                            Set<String> availableUserIds = entry.getValue().keySet();
 
                             Calendar calendar = Calendar.getInstance();
                             calendar.set(timeBlock.getYear(), timeBlock.getMonth(), timeBlock.getDay());
 
-                            AvailabilityBlock availabilityBlock = new AvailabilityBlock(totalInvitedCount, calendar, timeBlock.getMonthString(), entry.getKey(), userIDs);
+                            AvailabilityBlock availabilityBlock = new AvailabilityBlock(totalInvitedCount, calendar, timeBlock.getMonthString(), entry.getKey(),
+                                                                                        availableUserIds, respondedUserIds, notRespondedUserIds);
 
-                            if (availabilityBlocks.get(userIDs.size()) != null) {
-                                availabilityBlocks.get(userIDs.size()).add(availabilityBlock);
+                            if (availabilityBlocks.get(availableUserIds.size()) != null) {
+                                availabilityBlocks.get(availableUserIds.size()).add(availabilityBlock);
                             } else {
                                 List<AvailabilityBlock> initialList = new ArrayList<>();
                                 initialList.add(availabilityBlock);
-                                availabilityBlocks.put(userIDs.size(), initialList);
+                                availabilityBlocks.put(availableUserIds.size(), initialList);
                             }
                         }
                     }
@@ -252,7 +267,7 @@ public class ViewResponseActivity extends AppCompatActivity {
 
     private void createDialog(AvailabilityBlock availabilityBlock) {
         FragmentManager fm = getSupportFragmentManager();
-        ViewResponseDialog overlay = new ViewResponseDialog();
+        ViewResponseDialog overlay = ViewResponseDialog.newInstance(availabilityBlock);
         overlay.show(fm, "FragmentDialog");
     }
 
