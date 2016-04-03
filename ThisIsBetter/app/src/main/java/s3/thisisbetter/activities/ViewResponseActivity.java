@@ -227,7 +227,7 @@ public class ViewResponseActivity extends AppCompatActivity {
             responsePresent = true;
 
             TextView responseRatio = new TextView(this);
-            responseRatio.setText(entry.getKey() + "/" + totalInvitedCount + " Available");
+            responseRatio.setText(entry.getKey() + " out of " + totalInvitedCount + " people available");
             responseRatio.setTextColor(this.getResources().getColor(R.color.colorGrayDark));
             responseRatio.setTextSize(16);
 
