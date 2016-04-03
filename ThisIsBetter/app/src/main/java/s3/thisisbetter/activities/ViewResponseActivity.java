@@ -243,7 +243,7 @@ public class ViewResponseActivity extends AppCompatActivity {
             availabilityListView.setScrollContainer(false);
 
             LinearLayout.LayoutParams listParams = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            listParams.height = 110 * entry.getValue().size();
+            listParams.height = 118 * entry.getValue().size();
             availabilityListView.setLayoutParams(listParams);
 
             setUpListClickListener(availabilityListView);
