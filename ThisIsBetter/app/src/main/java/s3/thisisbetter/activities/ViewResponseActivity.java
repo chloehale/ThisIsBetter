@@ -78,7 +78,6 @@ public class ViewResponseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
     }
 
     private void setupBackButton() {
@@ -194,8 +193,17 @@ public class ViewResponseActivity extends AppCompatActivity {
         TextView subStatusText = (TextView) findViewById(R.id.status_sub_text_view);
         if (totalCount == 1) {
             responseStatusTitle.setText("You are the only member of this event");
-            subStatusText.setVisibility(View.VISIBLE);
-            subStatusText.setText("Invite some people to view their responses");
+
+            Button responseInviteButton = (Button) findViewById(R.id.response_invite_button);
+            responseInviteButton.setVisibility(View.VISIBLE);
+            responseInviteButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(ViewResponseActivity.this, InviteActivity.class);
+                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                    startActivity(intent);
+                }
+            });
         }
         else if (totalCount == respondedCount) {
             subStatusText.setVisibility(View.GONE);
