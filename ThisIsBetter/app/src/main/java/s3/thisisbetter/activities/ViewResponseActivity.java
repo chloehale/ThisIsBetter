@@ -80,7 +80,6 @@ public class ViewResponseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-        System.out.println("created");
     }
 
     @Override
