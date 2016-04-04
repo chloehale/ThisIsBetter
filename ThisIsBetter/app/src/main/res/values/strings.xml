@@ -31,5 +31,7 @@
     <string name="Invite_Text">Invite Others to\n\"Aquarium Trip\"</string>
     <string name="FinishButtonMessage">You can always change this later.</string>
     <string name="FinishButtonLabel">FINISH</string>
+    <string name="SaveFinish">Save and Finish</string>
+    <string name="SaveEvent">Save Event</string>
 
 </resources>

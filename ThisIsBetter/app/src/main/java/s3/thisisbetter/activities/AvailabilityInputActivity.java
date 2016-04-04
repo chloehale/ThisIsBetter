@@ -90,6 +90,13 @@ public class AvailabilityInputActivity extends AppCompatActivity {
 
     private void setupSaveButton() {
         Button nextButton = (Button) findViewById(R.id.next_button);
+
+        if (parentType.equals(CreateEventActivity.PARENT_TYPE)) {
+            nextButton.setText(R.string.SaveEvent);
+        } else if (parentType.equals(EventsInvitedFragment.PARENT_TYPE)) {
+            nextButton.setText(R.string.SaveFinish);
+        }
+        
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
