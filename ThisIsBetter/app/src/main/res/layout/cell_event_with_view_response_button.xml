@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:padding="6dp" >
+
+    <TextView
+        android:id="@+id/first_line"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true"
+        android:singleLine="true"
+        android:textSize="18sp" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/second_line"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:layout_below="@+id/first_line" />
+
+    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/third_line"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textSize="12sp"
+        android:textColor="@color/colorAccent"
+        android:layout_below="@+id/second_line"
+        android:layout_alignParentBottom="true" />
+
+    <Button
+        android:id="@+id/view_response_button"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:padding="5dp"
+        android:text="View Responses"
+        android:scaleType="fitCenter"
+        android:adjustViewBounds="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true" />
+
+</RelativeLayout>

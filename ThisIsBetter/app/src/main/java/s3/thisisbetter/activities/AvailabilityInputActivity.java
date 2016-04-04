@@ -96,7 +96,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         } else if (parentType.equals(EventsInvitedFragment.PARENT_TYPE)) {
             nextButton.setText(R.string.SaveFinish);
         }
-        
+
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

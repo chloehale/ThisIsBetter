@@ -37,10 +37,11 @@ public class EventsInvitedFragment extends Fragment {
      * fragment.
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
-    public final static String PARENT_TYPE = "invitation_tab";
     private EventInvitedArrayAdapter adapter;
     private int numInvites = 0;
     private TextView noInvitesText;
+    public final static String PARENT_TYPE = "invitation_tab";
+
 
     public EventsInvitedFragment() { }
 
@@ -86,19 +87,19 @@ public class EventsInvitedFragment extends Fragment {
                 String eventID = adapter.getEventID(e);
                 boolean haveResponded = e.getInvitedHaveResponded().get(DB.getMyUID());
 
-                if (!haveResponded) {
+//                if (!haveResponded) {
                     Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
                     intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
                     intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
                     intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
                     startActivity(intent);
-                }
-                else {
-                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
-                    startActivity(intent);
-                }
+//                }
+//                else {
+//                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
+//                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+//                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
+//                    startActivity(intent);
+//                }
             }
         });
     }

@@ -7,6 +7,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
@@ -17,6 +18,7 @@ import java.util.Map;
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.activities.AvailabilityInputActivity;
+import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.fragments.EventsInvitedFragment;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
@@ -29,6 +31,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
     private final ArrayList<Event> values;
     private Map<String, String> uidToEmail;
     private Map<String, Event> eventIDToObject;
+    public final static String PARENT_TYPE = "invitation_tab";
 
 
     public EventInvitedArrayAdapter(Context context, ArrayList<Event> values) {
@@ -47,9 +50,9 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
         final View rowView;
         if(haveResponded) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.cell_event_with_button, parent, false);
+            rowView = inflater.inflate(R.layout.cell_event_with_view_response_button, parent, false);
 
-            ImageButton editButton = (ImageButton) rowView.findViewById(R.id.edit_icon);
+            Button editButton = (Button) rowView.findViewById(R.id.view_response_button);
             editButton.setFocusable(false);
             editButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -57,11 +60,16 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
                     Event e = getItem(position);
                     String eventID = getEventID(e);
 
-                    Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, EventsInvitedFragment.PARENT_TYPE);
+                    Intent intent = new Intent(getContext(), ViewResponseActivity.class);
                     intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
+                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
                     rowView.getContext().startActivity(intent);
+
+//                    Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
+//                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, EventsInvitedFragment.PARENT_TYPE);
+//                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+//                    intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
+//                    rowView.getContext().startActivity(intent);
                 }
             });
         } else {
