@@ -19,6 +19,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.firebase.client.DataSnapshot;
+import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
 import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
@@ -52,6 +53,7 @@ public class ViewResponseActivity extends AppCompatActivity {
     private Toolbar toolbar;
     private Map<Integer, List<AvailabilityBlock>> availabilityBlocks;
     private int totalInvitedCount;
+    private Firebase queryRef;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,7 +80,16 @@ public class ViewResponseActivity extends AppCompatActivity {
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
+        System.out.println("created");
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+        queryRef.removeEventListener(eventListener);
+    }
+
 
     private void setupBackButton() {
         ImageButton backButton = (ImageButton) findViewById(R.id.back_button);
@@ -91,23 +102,24 @@ public class ViewResponseActivity extends AppCompatActivity {
     }
 
     private void getEventData() {
-
-        Query queryRef = DB.getEventsRef().child(eventID);
-        queryRef.addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot snapshot) {
-                Event event = snapshot.getValue(Event.class);
-                setTitleText(event);
-                setResponseStatusText(event);
-                getAvailabilityData(event);
-            }
-
-            @Override
-            public void onCancelled(FirebaseError firebaseError) {
-                System.out.println("Failed to read event: " + firebaseError.getMessage());
-            }
-        });
+        queryRef = DB.getEventsRef().child(eventID);
+        queryRef.addValueEventListener(eventListener);
     }
+
+    private ValueEventListener eventListener = new ValueEventListener() {
+        @Override
+        public void onDataChange(DataSnapshot snapshot) {
+            Event event = snapshot.getValue(Event.class);
+            setTitleText(event);
+            setResponseStatusText(event);
+            getAvailabilityData(event);
+        }
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {
+            System.out.println("Failed to read event: " + firebaseError.getMessage());
+        }
+    };
 
     private void getAvailabilityData(Event event) {
 
