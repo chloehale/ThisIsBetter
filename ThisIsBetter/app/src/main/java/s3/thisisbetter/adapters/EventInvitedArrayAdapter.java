@@ -88,7 +88,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<Event> {
         detailsView.setText(ownerDescription);
 
         if(haveResponded && respondedView != null) {
-            respondedView.setText("You've Responded To This Invitation");
+            respondedView.setText("You've Responded");
         }
 
         return rowView;
