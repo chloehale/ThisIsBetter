@@ -137,11 +137,11 @@ public class ViewResponseDialog extends DialogFragment {
         public CharSequence getPageTitle(int position) {
             switch (position) {
                 case 0:
-                    return "AVAILABLE";
+                    return "AVAILABLE (" + availabilityBlock.getAvailableUserIds().size() + ")";
                 case 1:
-                    return "UNAVAILABLE";
+                    return "UNAVAILABLE (" + availabilityBlock.getNotAvailableUserIds().size() + ")";
                 case 2:
-                    return "RESPONDING";
+                    return "RESPONDING (" + availabilityBlock.getNotRespondedUserIds().size() + ")";
             }
             return null;
         }
