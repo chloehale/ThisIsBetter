@@ -40,6 +40,7 @@ import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
 import s3.thisisbetter.adapters.ViewResponseArrayAdapter;
+import s3.thisisbetter.comparators.AvailabilityBlockComparator;
 import s3.thisisbetter.dialogs.ViewResponseDialog;
 import s3.thisisbetter.model.AvailabilityBlock;
 import s3.thisisbetter.model.DB;
@@ -236,6 +237,9 @@ public class ViewResponseActivity extends AppCompatActivity {
 
         for (Map.Entry<Integer, List<AvailabilityBlock>> entry : availabilityBlocks.entrySet()) {
 
+            ArrayList availabilityBlocks = new ArrayList<>(entry.getValue());
+            Collections.sort(availabilityBlocks, new AvailabilityBlockComparator());
+
             responsePresent = true;
 
             TextView responseRatio = new TextView(this);
@@ -250,12 +254,9 @@ public class ViewResponseActivity extends AppCompatActivity {
             responseListLayout.addView(responseRatio);
 
             ListView availabilityListView = new ListView(this);
-            ViewResponseArrayAdapter adapter = new ViewResponseArrayAdapter(responseListLayout.getContext(), entry.getValue());
+            ViewResponseArrayAdapter adapter = new ViewResponseArrayAdapter(responseListLayout.getContext(), availabilityBlocks);
             availabilityListView.setAdapter(adapter);
             setDynamicHeight(availabilityListView);
-//            LinearLayout.LayoutParams listParams = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-//            listParams.height = 118 * entry.getValue().size();
-//            availabilityListView.setLayoutParams(listParams);
 
             setUpListClickListener(availabilityListView);
 

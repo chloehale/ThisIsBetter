@@ -12,10 +12,12 @@ public class AvailabilityBlock {
 
     private int availableCount;
     private int totalInvitedCount;
+    private Calendar calendar;
     private String weekday;
     private int day;
     private String month;
     private String timeRange;
+    private Integer hour;
 
     private Set<String> availableUserIds;
     private Set<String> notAvailableUserIds;
@@ -26,10 +28,12 @@ public class AvailabilityBlock {
 
         this.availableCount = availableUserIds.size();
         this.totalInvitedCount = totalInvitedCount;
+        this.calendar = calendar;
         this.weekday = this.convertToWeekdayString(calendar);
         this.day = calendar.get(Calendar.DAY_OF_MONTH);
         this.month = month;
         this.timeRange = this.convertToTimeRange(time);
+        this.hour = this.parseHour(time);
 
         this.availableUserIds = availableUserIds;
 
@@ -42,6 +46,8 @@ public class AvailabilityBlock {
 
     }
 
+    public Calendar getCalendar() { return calendar; }
+
     public String getWeekday() {
         return weekday;
     }
@@ -53,6 +59,8 @@ public class AvailabilityBlock {
     public String getTimeRange() {
         return timeRange;
     }
+
+    public Integer getHour() { return hour; }
 
     public int getAvailableCount() {
         return availableCount;
@@ -94,6 +102,34 @@ public class AvailabilityBlock {
             default:
                 return "Error";
         }
+    }
+
+    private int parseHour(String time) {
+        String hourString = new String();
+        for (int i = 0; i < time.length(); i++) {
+            if (time.charAt(i) == ':')
+                break;
+            hourString += time.charAt(i);
+        }
+
+        int hour = Integer.parseInt(hourString);
+
+        String period = this.parsePeriod(time);
+        if (period.equals("pm") && hour != 12) {
+            hour += 12;
+        }
+        else if (period.equals("am") && hour == 12) {
+            hour = 0;
+        }
+
+        return hour;
+    }
+
+    private String parsePeriod(String time) {
+        String period = new String();
+        period += time.charAt(time.length()-2);
+        period += time.charAt(time.length()-1);
+        return period;
     }
 
     private String convertToTimeRange(String time) {
