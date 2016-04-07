@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -251,11 +252,10 @@ public class ViewResponseActivity extends AppCompatActivity {
             ListView availabilityListView = new ListView(this);
             ViewResponseArrayAdapter adapter = new ViewResponseArrayAdapter(responseListLayout.getContext(), entry.getValue());
             availabilityListView.setAdapter(adapter);
-            availabilityListView.setScrollContainer(false);
-
-            LinearLayout.LayoutParams listParams = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-            listParams.height = 118 * entry.getValue().size();
-            availabilityListView.setLayoutParams(listParams);
+            setDynamicHeight(availabilityListView);
+//            LinearLayout.LayoutParams listParams = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+//            listParams.height = 118 * entry.getValue().size();
+//            availabilityListView.setLayoutParams(listParams);
 
             setUpListClickListener(availabilityListView);
 
@@ -272,6 +272,27 @@ public class ViewResponseActivity extends AppCompatActivity {
             subStatusText.setVisibility(View.GONE);
         }
     }
+
+
+    public static void setDynamicHeight(ListView listView) {
+        ViewResponseArrayAdapter adapter = (ViewResponseArrayAdapter) listView.getAdapter();
+        //check adapter if null
+        if (adapter == null) {
+            return;
+        }
+        int height = 0;
+        int desiredWidth = View.MeasureSpec.makeMeasureSpec(listView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View listItem = adapter.getView(i, null, listView);
+            listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+            height += listItem.getMeasuredHeight();
+        }
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
+        layoutParams.height = height + (listView.getDividerHeight() * (adapter.getCount()));
+        listView.setLayoutParams(layoutParams);
+        listView.requestLayout();
+    }
+
 
     private void setUpListClickListener(ListView listView) {
 
