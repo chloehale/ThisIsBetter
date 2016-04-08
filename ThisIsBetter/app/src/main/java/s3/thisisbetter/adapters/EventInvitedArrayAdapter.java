@@ -141,6 +141,11 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<EventListItem> {
         insertEvent(e, eventID);
     }
 
+    public void deleteEvent(Event e, String eventID) {
+        this.remove(e);
+        eventIDToObject.remove(eventID);
+    }
+
     private void insertEvent(Event e, String eventID) {
         boolean haveResponded = e.getInvitedHaveResponded().get(DB.getMyUID());
 
