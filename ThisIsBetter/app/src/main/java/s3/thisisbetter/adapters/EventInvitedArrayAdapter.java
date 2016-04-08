@@ -142,6 +142,13 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<EventListItem> {
     }
 
     public void deleteEvent(Event e, String eventID) {
+        boolean haveResponded = e.getInvitedHaveResponded().get(DB.getMyUID());
+        if(haveResponded) {
+            numRespondedTo--;
+        } else {
+            numAwaitingResponse--;
+        }
+
         this.remove(e);
         eventIDToObject.remove(eventID);
     }

@@ -139,7 +139,10 @@ public class EventsInvitedFragment extends Fragment {
         }
 
         @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {}
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            Event e = dataSnapshot.getValue(Event.class);
+            adapter.deleteEvent(e, dataSnapshot.getKey());
+        }
 
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
