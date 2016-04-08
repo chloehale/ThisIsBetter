@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
+    android:background="@color/colorGrayLight"
     tools:context=".activities.InviteActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -21,18 +22,16 @@
             android:background="?attr/colorPrimary"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
-
             <TextView
+                android:id="@+id/invite_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text=""
-                android:textSize="22sp"
-                android:padding="25dp"
                 android:layout_gravity="center"
-                android:id="@+id/invite_text"
+                android:text="test"
+                android:textSize="19sp"
                 android:textAlignment="center"
-                android:textColor="#FFFFFF" />
-
+                android:textColor="@color/colorWhite"
+                android:textStyle="bold" />
 
         </android.support.v7.widget.Toolbar>
 
@@ -45,12 +44,10 @@
         android:layout_height="match_parent"
         android:id="@+id/context1"
         android:paddingBottom="@dimen/activity_vertical_margin"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:context=".activities.InviteActivity"
-        tools:showIn="@layout/activity_invite">
+        tools:showIn="@layout/activity_invite" >
 
         <ListView
             android:layout_width="wrap_content"
@@ -59,19 +56,19 @@
             android:layout_alignParentTop="true"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="32dp"
-            android:layout_marginBottom="70dp"/>
+            android:layout_marginBottom="150dp"
+            android:background="@color/colorWhite"/>
 
     </RelativeLayout>
-
 
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/fab_margin"
+        android:layout_margin="@dimen/activity_horizontal_margin"
         android:src="@android:drawable/ic_input_add"
-        android:tint="#fff"
+        android:tint="@color/colorWhite"
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="bottom|start" />
 
@@ -81,12 +78,11 @@
         android:id="@+id/editText"
         android:textSize="14sp"
         android:text="@string/FinishButtonMessage"
+        android:textColor="@color/colorSecondaryText"
         app:layout_anchor="@id/context1"
         app:layout_anchorGravity="bottom|center"
         android:layout_alignTop="@+id/button"
         android:layout_centerHorizontal="true"
-        android:layout_marginLeft="@dimen/fab_margin"
-        android:layout_marginRight="@dimen/fab_margin"
         android:layout_marginBottom="65dp" />
 
     <Button
@@ -95,13 +91,13 @@
         android:text="@string/FinishButtonLabel"
         android:textSize="18sp"
         android:id="@+id/button"
-        android:background="?attr/colorPrimary"
-        android:textColor="#FFFFFF"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorWhite"
         android:elevation="10dp"
         app:layout_anchor="@id/context1"
         app:layout_anchorGravity="bottom|center"
-        android:layout_marginLeft="@dimen/fab_margin"
-        android:layout_marginRight="@dimen/fab_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin" />
 
 

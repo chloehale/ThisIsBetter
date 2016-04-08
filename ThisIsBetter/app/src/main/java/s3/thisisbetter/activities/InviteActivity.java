@@ -155,7 +155,6 @@ public class InviteActivity extends AppCompatActivity {
 
                 AlertDialog dialog = new AlertDialog.Builder(InviteActivity.this)
                         .setTitle("Invite by Email")
-                        .setView(input)
                         .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
@@ -173,7 +172,12 @@ public class InviteActivity extends AppCompatActivity {
                         .create();
 
                 dialog.setCanceledOnTouchOutside(false);
+                dialog.setView(input, 35, 50, 35, 50);
                 dialog.show();
+
+                int color = getResources().getColor(R.color.colorPrimary);
+                dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(color);
+                dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(color);
             }
         });
     }
@@ -243,7 +247,11 @@ public class InviteActivity extends AppCompatActivity {
     }
 
     public void addEmail(String email) {
-        adapter.addEmail(email);
+        String stripped = email.replaceAll("\\s+", "");
+
+        if(!stripped.equals("")) {
+            adapter.addEmail(email);
+        }
     }
 
 }

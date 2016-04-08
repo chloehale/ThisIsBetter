@@ -21,7 +21,7 @@ public class ViewResponseArrayAdapter extends ArrayAdapter<AvailabilityBlock> {
     private List<AvailabilityBlock> availabilityBlockList;
 
     public ViewResponseArrayAdapter(Context context, List<AvailabilityBlock> availabilityBlockList) {
-        super(context, R.layout.cell_event_with_button, availabilityBlockList);
+        super(context, R.layout.cell_event_with_edit_button, availabilityBlockList);
         this.context = context;
         this.availabilityBlockList = availabilityBlockList;
     }

@@ -17,7 +17,6 @@ package s3.thisisbetter.tabs;
 
 import android.content.Context;
 import android.graphics.Typeface;
-import android.os.Build;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
@@ -223,7 +222,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
             mTabStrip.addView(tabView);
             if (i == mViewPager.getCurrentItem()) {
                 tabView.setSelected(true);
-                tabTitleView.setTextColor(this.getResources().getColor(R.color.colorLight));
+                tabTitleView.setTextColor(this.getResources().getColor(R.color.colorWhite));
             }
             else {
                 tabTitleView.setTextColor(this.getResources().getColor(R.color.colorFaded));
@@ -306,7 +305,7 @@ public class SlidingTabLayout extends HorizontalScrollView {
                 mTabStrip.getChildAt(i).setSelected(position == i);
                 TextView tabTitleView = (TextView) mTabStrip.getChildAt(i);
                 if (i == position) {
-                    tabTitleView.setTextColor(getResources().getColor(R.color.colorLight));
+                    tabTitleView.setTextColor(getResources().getColor(R.color.colorWhite));
                 }
                 else {
                     tabTitleView.setTextColor(getResources().getColor(R.color.colorFaded));

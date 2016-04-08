@@ -26,6 +26,7 @@ import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.adapters.EventInvitedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
+import s3.thisisbetter.model.InvitedListItem;
 import s3.thisisbetter.model.User;
 
 /**
@@ -77,29 +78,23 @@ public class EventsInvitedFragment extends Fragment {
 
 
         // Set up the adapter
-        adapter = new EventInvitedArrayAdapter(rootView.getContext(), new ArrayList<Event>());
+        adapter = new EventInvitedArrayAdapter(rootView.getContext(), new ArrayList<InvitedListItem>());
         ListView listView = (ListView) rootView.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Event e = adapter.getItem(position);
-                String eventID = adapter.getEventID(e);
-                boolean haveResponded = e.getInvitedHaveResponded().get(DB.getMyUID());
+                InvitedListItem item = adapter.getItem(position);
+                if(item.isSection()) { return; }
 
-//                if (!haveResponded) {
-                    Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
-                    startActivity(intent);
-//                }
-//                else {
-//                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
-//                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-//                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
-//                    startActivity(intent);
-//                }
+                Event e = (Event) item;
+                String eventID = adapter.getEventID(e);
+
+                Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
+                intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
+                intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
+                startActivity(intent);
             }
         });
     }

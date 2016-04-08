@@ -1,7 +1,6 @@
 package s3.thisisbetter.activities;
 
 import android.content.Intent;
-import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v7.app.AppCompatActivity;
 
@@ -17,13 +16,18 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.PopupMenu;
 
+import com.firebase.client.ChildEventListener;
+import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
+import com.firebase.client.FirebaseError;
+import com.firebase.client.Query;
 
 import s3.thisisbetter.fragments.EventsIOwnFragment;
 import s3.thisisbetter.R;
 import s3.thisisbetter.fragments.EventsInvitedFragment;
 import s3.thisisbetter.fragments.SettingsFragment;
 import s3.thisisbetter.model.DB;
+import s3.thisisbetter.model.Event;
 
 public class TabbedEventActivity extends AppCompatActivity {
 
@@ -42,7 +46,9 @@ public class TabbedEventActivity extends AppCompatActivity {
      */
     private ViewPager mViewPager;
     private Toolbar mToolbar;
-    private AppBarLayout mAppBarLayout;
+    private TabLayout tabLayout;
+    private int notificationCount;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +68,52 @@ public class TabbedEventActivity extends AppCompatActivity {
         if (mToolbar != null) {
             mToolbar.setTitle("This is Better");
         }
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
+
+        setUpNotifications();
     }
 
+    private void setUpNotifications() {
+        // Create the firebase query that grabs all of the events I'm invited to that I haven't
+        // responded to yet.
+        String uid = DB.getMyUID();
+        Query queryRef = DB.getEventsRef().orderByChild(Event.INVITED_KEY + "/" + uid).equalTo(false);
+        queryRef.addChildEventListener(eventListener);
+        DB.monitorChildListener(queryRef, eventListener);
+    }
+
+    private void adjustNotificationCountBy(int delta) {
+        notificationCount += delta;
+        TabLayout.Tab tab = tabLayout.getTabAt(1);
+
+        if (notificationCount > 0) {
+            tab.setText("Invitations (" + notificationCount + ")");
+        } else {
+            tab.setText("Invitations");
+        }
+    }
+
+    private ChildEventListener eventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            adjustNotificationCountBy(1);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {}
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            adjustNotificationCountBy(-1);
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {}
+
+        @Override
+        public void onCancelled(FirebaseError firebaseError) {}
+    };
 
     public void showPopup(View v) {
         PopupMenu popup = new PopupMenu(this, v);
