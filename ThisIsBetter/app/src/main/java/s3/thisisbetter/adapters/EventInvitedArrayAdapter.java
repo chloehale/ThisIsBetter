@@ -127,13 +127,15 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<EventListItem> {
 
     public void editEvent(Event e, String eventID) {
         Event oldEventObject = eventIDToObject.get(eventID);
-        this.remove(oldEventObject);
+        if(oldEventObject != null) {
+            this.remove(oldEventObject);
 
-        boolean oldHaveResponded = oldEventObject.getInvitedHaveResponded().get(DB.getMyUID());
-        if(oldHaveResponded) {
-            numRespondedTo--;
-        } else {
-            numAwaitingResponse--;
+            boolean oldHaveResponded = oldEventObject.getInvitedHaveResponded().get(DB.getMyUID());
+            if(oldHaveResponded) {
+                numRespondedTo--;
+            } else {
+                numAwaitingResponse--;
+            }
         }
 
         insertEvent(e, eventID);
