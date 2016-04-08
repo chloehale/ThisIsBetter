@@ -131,7 +131,7 @@ public class EventsInvitedFragment extends Fragment {
 
             if(!e.getInvitedHaveResponded().containsKey(myUID)) {
                 // we are no longer invited to this event
-                adapter.deleteEvent(e, dataSnapshot.getKey());
+                adapter.deleteEvent(dataSnapshot.getKey());
             } else {
                 // the event we're invited to has changed
                 adapter.editEvent(e, dataSnapshot.getKey());
@@ -140,8 +140,7 @@ public class EventsInvitedFragment extends Fragment {
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-            Event e = dataSnapshot.getValue(Event.class);
-            adapter.deleteEvent(e, dataSnapshot.getKey());
+            adapter.deleteEvent(dataSnapshot.getKey());
         }
 
         @Override
