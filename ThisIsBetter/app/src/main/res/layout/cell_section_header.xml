@@ -19,7 +19,7 @@
         android:background="@color/colorPrimaryDark" />
 
     <TextView
-        android:id="@+id/no_invites_text"
+        android:id="@+id/no_events_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="No Events"

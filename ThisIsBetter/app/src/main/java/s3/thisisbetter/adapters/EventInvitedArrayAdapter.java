@@ -19,15 +19,15 @@ import s3.thisisbetter.R;
 import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
-import s3.thisisbetter.model.InvitedListItem;
+import s3.thisisbetter.model.EventListItem;
 import s3.thisisbetter.model.SectionItem;
 
 /**
  * Created by Chloe on 3/17/16.
  */
-public class EventInvitedArrayAdapter extends ArrayAdapter<InvitedListItem> {
+public class EventInvitedArrayAdapter extends ArrayAdapter<EventListItem> {
     private final Context context;
-    private final ArrayList<InvitedListItem> values;
+    private final ArrayList<EventListItem> values;
     private Map<String, String> uidToEmail;
     private Map<String, Event> eventIDToObject;
     public final static String PARENT_TYPE = "invitation_tab";
@@ -36,7 +36,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<InvitedListItem> {
     private int numRespondedTo;
 
 
-    public EventInvitedArrayAdapter(Context context, ArrayList<InvitedListItem> values) {
+    public EventInvitedArrayAdapter(Context context, ArrayList<EventListItem> values) {
         super(context, R.layout.cell_event_with_view_response_button, values);
         this.values = values;
         this.context = context;
@@ -51,7 +51,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<InvitedListItem> {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
 
-        InvitedListItem item = values.get(position);
+        EventListItem item = values.get(position);
         View rowView;
         LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
@@ -61,7 +61,7 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<InvitedListItem> {
             TextView sectionTitleView = (TextView) rowView.findViewById(R.id.section_title);
             sectionTitleView.setText(section.getTitle());
 
-            TextView noInvitesView = (TextView) rowView.findViewById(R.id.no_invites_text);
+            TextView noInvitesView = (TextView) rowView.findViewById(R.id.no_events_text);
             if((position == 0 && numAwaitingResponse == 0) || (position != 0 && numRespondedTo == 0)) {
                 noInvitesView.setVisibility(View.VISIBLE);
             } else {

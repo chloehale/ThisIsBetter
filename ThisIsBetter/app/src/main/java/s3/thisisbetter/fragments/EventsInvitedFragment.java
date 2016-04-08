@@ -8,7 +8,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
@@ -22,11 +21,10 @@ import java.util.ArrayList;
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
 import s3.thisisbetter.activities.AvailabilityInputActivity;
-import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.adapters.EventInvitedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
-import s3.thisisbetter.model.InvitedListItem;
+import s3.thisisbetter.model.EventListItem;
 import s3.thisisbetter.model.User;
 
 /**
@@ -74,13 +72,13 @@ public class EventsInvitedFragment extends Fragment {
 
 
         // Set up the adapter
-        adapter = new EventInvitedArrayAdapter(rootView.getContext(), new ArrayList<InvitedListItem>());
+        adapter = new EventInvitedArrayAdapter(rootView.getContext(), new ArrayList<EventListItem>());
         ListView listView = (ListView) rootView.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                InvitedListItem item = adapter.getItem(position);
+                EventListItem item = adapter.getItem(position);
                 if(item.isSection()) { return; }
 
                 Event e = (Event) item;

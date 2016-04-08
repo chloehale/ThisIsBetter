@@ -11,7 +11,7 @@ import java.util.Map;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 
-public class Event implements InvitedListItem {
+public class Event implements EventListItem {
     public static final String TITLE_KEY = "title";
     public static final String OWNER_KEY = "ownerID";
     public static final String INVITED_KEY = "invitedHaveResponded";

@@ -2,9 +2,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@color/colorGrayLight"
     tools:context=".fragments.EventsIOwnFragment">
 
@@ -12,8 +9,9 @@
     <ListView
         android:id="@+id/list_view"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-    </ListView>
+        android:layout_height="wrap_content"
+        android:paddingBottom="100dp"
+        android:clipToPadding="false"/>
 
 
     <android.support.design.widget.FloatingActionButton
@@ -27,14 +25,5 @@
         android:layout_marginBottom="@dimen/activity_vertical_margin"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You haven't created any events"
-        android:id="@+id/noEventsText"
-        android:textColor="@color/colorHintText"
-        android:layout_centerHorizontal="true"
-        android:layout_alignTop="@+id/list_view" />
 
 </RelativeLayout>

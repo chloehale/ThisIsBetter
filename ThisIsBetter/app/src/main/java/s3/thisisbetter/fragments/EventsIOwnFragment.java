@@ -25,6 +25,7 @@ import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
+import s3.thisisbetter.model.EventListItem;
 
 /**
  * The fragment for the Events I Own tab
@@ -37,8 +38,6 @@ public class EventsIOwnFragment extends Fragment {
     public final static String PARENT_TYPE = "events_i_own";
     private static final String ARG_SECTION_NUMBER = "section_number";
     private EventOwnedArrayAdapter adapter;
-    private int numEventsOwned = 0;
-    private TextView noEventsText;
 
     public EventsIOwnFragment() { }
 
@@ -58,7 +57,6 @@ public class EventsIOwnFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events_i_own, container, false);
-        noEventsText = (TextView) rootView.findViewById(R.id.noEventsText);
         setUpListView(rootView);
 
         FloatingActionButton fab = (FloatingActionButton) rootView.findViewById(R.id.fab);
@@ -81,7 +79,7 @@ public class EventsIOwnFragment extends Fragment {
         DB.monitorChildListener(queryRef, eventListener);
 
         // Set up the adapter
-        adapter = new EventOwnedArrayAdapter(rootView.getContext(), new ArrayList<Event>());
+        adapter = new EventOwnedArrayAdapter(rootView.getContext(), new ArrayList<EventListItem>());
         ListView listView = (ListView) rootView.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         setUpListClickListener(listView);
@@ -90,7 +88,10 @@ public class EventsIOwnFragment extends Fragment {
     private void setUpListClickListener(ListView listView) {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String eventID = adapter.getEventID(adapter.getItem(position));
+                EventListItem item = adapter.getItem(position);
+                if(item.isSection()) { return; }
+
+                String eventID = adapter.getEventID(item);
 
                 Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
                 intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
@@ -103,11 +104,6 @@ public class EventsIOwnFragment extends Fragment {
     private ChildEventListener eventListener = new ChildEventListener() {
         @Override
         public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-            numEventsOwned++;
-            if (numEventsOwned == 1) {
-
-                noEventsText.setVisibility(View.INVISIBLE);
-            }
             Event e = dataSnapshot.getValue(Event.class);
             adapter.addEvent(e, dataSnapshot.getKey());
         }
@@ -120,12 +116,6 @@ public class EventsIOwnFragment extends Fragment {
 
         @Override
         public void onChildRemoved(DataSnapshot dataSnapshot) {
-            numEventsOwned--;
-            if (numEventsOwned == 0)
-            {
-                noEventsText.setVisibility(View.VISIBLE);
-            }
-
             Event e = dataSnapshot.getValue(Event.class);
             adapter.deleteEvent(e);
         }
