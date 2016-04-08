@@ -8,12 +8,5 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="You haven't been invited to any events"
-        android:id="@+id/noInvitesText"
-        android:layout_centerHorizontal="true"
-        android:layout_alignTop="@+id/list_view" />
 
 </RelativeLayout>

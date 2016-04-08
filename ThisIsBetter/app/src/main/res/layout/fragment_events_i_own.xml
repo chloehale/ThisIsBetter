@@ -33,6 +33,7 @@
         android:layout_height="wrap_content"
         android:text="You haven't created any events"
         android:id="@+id/noEventsText"
+        android:textColor="@color/colorHintText"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/list_view" />
 
