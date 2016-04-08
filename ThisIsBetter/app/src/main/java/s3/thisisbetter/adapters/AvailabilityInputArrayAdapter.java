@@ -22,7 +22,7 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
     private TimeBlock timeBlock;
 
     public AvailabilityInputArrayAdapter(Context context, ArrayList<String> values, TimeBlock timeBlock) {
-        super(context, R.layout.cell_event_basic, values);
+        super(context, R.layout.cell_availability_input_view, values);
         this.context = context;
         this.values = values;
         this.timeBlock = timeBlock;
@@ -54,7 +54,7 @@ public class AvailabilityInputArrayAdapter extends ArrayAdapter<String> {
             setNumAvailableText(true, position, rowView);
         }
         else {
-            rowView.setBackgroundResource(R.color.colorLight);
+            rowView.setBackgroundResource(R.color.colorWhite);
             setNumAvailableText(false, position, rowView);
         }
 

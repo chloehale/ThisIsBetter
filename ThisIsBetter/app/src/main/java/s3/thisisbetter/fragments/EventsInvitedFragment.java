@@ -26,6 +26,7 @@ import s3.thisisbetter.activities.ViewResponseActivity;
 import s3.thisisbetter.adapters.EventInvitedArrayAdapter;
 import s3.thisisbetter.model.DB;
 import s3.thisisbetter.model.Event;
+import s3.thisisbetter.model.InvitedListItem;
 import s3.thisisbetter.model.User;
 
 /**
@@ -38,8 +39,6 @@ public class EventsInvitedFragment extends Fragment {
      */
     private static final String ARG_SECTION_NUMBER = "section_number";
     private EventInvitedArrayAdapter adapter;
-    private int numInvites = 0;
-    private TextView noInvitesText;
     public final static String PARENT_TYPE = "invitation_tab";
 
 
@@ -61,8 +60,6 @@ public class EventsInvitedFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_events_invited, container, false);
-        noInvitesText = (TextView) rootView.findViewById(R.id.noInvitesText);
-
         setUpListView(rootView);
 
         return rootView;
@@ -77,29 +74,23 @@ public class EventsInvitedFragment extends Fragment {
 
 
         // Set up the adapter
-        adapter = new EventInvitedArrayAdapter(rootView.getContext(), new ArrayList<Event>());
+        adapter = new EventInvitedArrayAdapter(rootView.getContext(), new ArrayList<InvitedListItem>());
         ListView listView = (ListView) rootView.findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Event e = adapter.getItem(position);
-                String eventID = adapter.getEventID(e);
-                boolean haveResponded = e.getInvitedHaveResponded().get(DB.getMyUID());
+                InvitedListItem item = adapter.getItem(position);
+                if(item.isSection()) { return; }
 
-//                if (!haveResponded) {
-                    Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
-                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-                    intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
-                    startActivity(intent);
-//                }
-//                else {
-//                    Intent intent = new Intent(getActivity(), ViewResponseActivity.class);
-//                    intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
-//                    intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
-//                    startActivity(intent);
-//                }
+                Event e = (Event) item;
+                String eventID = adapter.getEventID(e);
+
+                Intent intent = new Intent(getContext(), AvailabilityInputActivity.class);
+                intent.putExtra(AppConstants.EXTRA_PARENT_TYPE, PARENT_TYPE);
+                intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
+                intent.putExtra(AppConstants.EXTRA_EVENT_TITLE, e.getTitle());
+                startActivity(intent);
             }
         });
     }
@@ -115,11 +106,6 @@ public class EventsInvitedFragment extends Fragment {
             // The invited tab doesn't show any events you own or events that you aren't invited to
             if(ownerUID.equals(myUID)) { return; }
             if(!e.getInvitedHaveResponded().containsKey(myUID)) { return; }
-            numInvites++;
-            if (numInvites == 1) {
-
-                noInvitesText.setVisibility(View.INVISIBLE);
-            }
 
             final String eventID = dataSnapshot.getKey();
 
@@ -146,14 +132,7 @@ public class EventsInvitedFragment extends Fragment {
         }
 
         @Override
-        public void onChildRemoved(DataSnapshot dataSnapshot) {
-            numInvites--;
-            if (numInvites == 0)
-            {
-                noInvitesText.setVisibility(View.VISIBLE);
-            }
-
-        }
+        public void onChildRemoved(DataSnapshot dataSnapshot) {}
 
         @Override
         public void onChildMoved(DataSnapshot dataSnapshot, String s) {}

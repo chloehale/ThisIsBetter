@@ -2,7 +2,10 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:padding="6dp" >
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="6dp"
+    android:paddingBottom="6dp" >
 
     <TextView
         android:id="@+id/first_line"
@@ -11,22 +14,16 @@
         android:layout_alignParentTop="true"
         android:layout_alignWithParentIfMissing="true"
         android:singleLine="true"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:textColor="@color/colorPrimaryText"/>
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/second_line"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:textSize="12sp"
+        android:textSize="14sp"
+        android:textColor="@color/colorSecondaryText"
         android:layout_below="@+id/first_line" />
-
-    <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/third_line"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textSize="12sp"
-        android:layout_below="@+id/second_line"
-        android:layout_alignParentBottom="true" />
 
     <Button
         android:id="@+id/view_response_button"

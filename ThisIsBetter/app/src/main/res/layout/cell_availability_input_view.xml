@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent" >
 
     <View
         android:id="@+id/top_divider"
@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentTop="true"
-        android:background="@color/divider_grey" />
+        android:background="@color/colorDividerGray" />
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/time_text"
@@ -18,7 +18,7 @@
         android:layout_height="37dp"
         android:layout_alignParentBottom="true"
         android:singleLine="true"
-        android:textSize="15sp"
+        android:textColor="@color/colorPrimaryText"
         android:paddingStart="30dp"
         android:gravity="center_vertical" />
 
@@ -28,7 +28,7 @@
         android:layout_height="37dp"
         android:layout_alignParentBottom="true"
         android:singleLine="true"
-        android:textSize="15sp"
+        android:textColor="@color/colorSecondaryText"
         android:paddingEnd="30dp"
         android:gravity="right|center_vertical" />
 
@@ -36,6 +36,6 @@
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:layout_alignParentBottom="true"
-        android:background="@color/divider_grey" />
+        android:background="@color/colorDividerGray" />
 
 </RelativeLayout>

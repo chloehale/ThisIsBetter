@@ -115,14 +115,6 @@ public class ViewResponseDialog extends DialogFragment {
             }
         });
 
-        Button cancelButton = (Button) view.findViewById(R.id.dialog_cancel);
-        cancelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dismissDialog();
-            }
-        });
-
         return view;
     }
 

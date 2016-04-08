@@ -5,6 +5,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@color/colorGrayLight"
     tools:context=".fragments.EventsIOwnFragment">
 
 
@@ -20,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@android:drawable/ic_input_add"
-        android:tint="#fff"
+        android:tint="@color/colorWhite"
         android:layout_marginLeft="@dimen/fab_margin"
         android:layout_marginRight="@dimen/fab_margin"
         android:layout_marginBottom="@dimen/activity_vertical_margin"
@@ -32,6 +33,7 @@
         android:layout_height="wrap_content"
         android:text="You haven't created any events"
         android:id="@+id/noEventsText"
+        android:textColor="@color/colorHintText"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/list_view" />
 

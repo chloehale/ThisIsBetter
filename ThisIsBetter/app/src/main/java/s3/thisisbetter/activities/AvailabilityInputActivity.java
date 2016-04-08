@@ -260,8 +260,8 @@ public class AvailabilityInputActivity extends AppCompatActivity {
     }
 
     private void showConfirmationDialog() {
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(AvailabilityInputActivity.this);
-        alertDialogBuilder.setTitle("Are You Sure?")
+        AlertDialog dialog = new AlertDialog.Builder(AvailabilityInputActivity.this)
+                .setTitle("Are You Sure?")
                 .setMessage("You haven't set any times that you're available. Are you really that busy?")
                 .setCancelable(false)
                 .setPositiveButton("Yes, I'm Never Free", new DialogInterface.OnClickListener() {
@@ -275,9 +275,14 @@ public class AvailabilityInputActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
-                });
+                })
+                .create();
 
-        alertDialogBuilder.create().show();
+        dialog.show();
+
+        int color = getResources().getColor(R.color.colorPrimary);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(color);
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(color);
     }
 
     private void saveTapped() {

@@ -37,7 +37,7 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
     private Map<String, Event> eventIDToObject;
 
     public EventOwnedArrayAdapter(Context context, ArrayList<Event> values) {
-        super(context, R.layout.cell_event_with_button, values);
+        super(context, R.layout.cell_event_with_edit_button, values);
         this.context = context;
         this.values = values;
         eventIDToObject = new HashMap<>();
@@ -49,7 +49,7 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
         View rowView;
         if(convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            rowView = inflater.inflate(R.layout.cell_event_with_button, parent, false);
+            rowView = inflater.inflate(R.layout.cell_event_with_edit_button, parent, false);
         } else {
             rowView = convertView;
         }
@@ -58,8 +58,6 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
 
         TextView eventTitleView = (TextView) rowView.findViewById(R.id.first_line);
         TextView numRespondedView = (TextView) rowView.findViewById(R.id.second_line);
-        TextView extraTextLine = (TextView) rowView.findViewById(R.id.third_line);
-        extraTextLine.setVisibility(View.GONE);
 
         final Event event = values.get(position);
         eventTitleView.setText(event.getTitle());
@@ -67,7 +65,16 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
 
         int numResponded = event.determineNumberResponded();
         int totalInvites = event.getInvitedHaveResponded().size();
-        String respondedText = numResponded + " / " + totalInvites + " Responded";
+        String respondedText = "Nobody invited";
+        if (totalInvites > 1)
+        {
+            if (numResponded == totalInvites) {
+                respondedText = "Everyone has responded";
+            }
+            else {
+                respondedText = (numResponded - 1) + " out of " + (totalInvites - 1) + " people have responded";
+            }
+        }
         numRespondedView.setText(respondedText);
 
         // Set up the edit icon
@@ -125,9 +132,7 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
     public void deleteEvent(View v, final Event e) {
         final String eventID = getEventID(e);
 
-        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(
-                getContext());
-        alertDialogBuilder
+        AlertDialog dialog = new AlertDialog.Builder(getContext())
                 .setTitle("Are you sure?")
                 .setCancelable(false)
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -152,14 +157,15 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
                             dialog.cancel();
 
                         }
-                    });
-
-        // create alert dialog
-        AlertDialog alertDialog = alertDialogBuilder.create();
+                    })
+                .create();
 
         // show it
-        alertDialog.show();
+        dialog.show();
 
+        int color = v.getResources().getColor(R.color.colorPrimary);
+        dialog.getButton(DialogInterface.BUTTON_NEGATIVE).setTextColor(color);
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setTextColor(color);
     }
 
     public void goToEditEvent(View v, Event e) {
