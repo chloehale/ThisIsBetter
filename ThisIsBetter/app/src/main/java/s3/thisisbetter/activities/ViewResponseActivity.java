@@ -309,6 +309,11 @@ public class ViewResponseActivity extends AppCompatActivity {
     private void createDialog(AvailabilityBlock availabilityBlock) {
         FragmentManager fm = getSupportFragmentManager();
         ViewResponseDialog overlay = ViewResponseDialog.newInstance(availabilityBlock);
+
+
+
+
+
         overlay.show(fm, "FragmentDialog");
     }
 
