@@ -123,10 +123,19 @@ public class EventsInvitedFragment extends Fragment {
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
             Event e = dataSnapshot.getValue(Event.class);
-            String ownerID = e.getOwnerID();
+
             // The invited tab doesn't show any events you own
-            if(ownerID.equals(DB.getMyUID())) { return; }
-            adapter.editEvent(e, dataSnapshot.getKey());
+            String ownerID = e.getOwnerID();
+            String myUID = DB.getMyUID();
+            if(ownerID.equals(myUID)) { return; }
+
+            if(!e.getInvitedHaveResponded().containsKey(myUID)) {
+                // we are no longer invited to this event
+                adapter.deleteEvent(e, dataSnapshot.getKey());
+            } else {
+                // the event we're invited to has changed
+                adapter.editEvent(e, dataSnapshot.getKey());
+            }
         }
 
         @Override
