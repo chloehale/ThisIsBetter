@@ -65,7 +65,16 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<Event> {
 
         int numResponded = event.determineNumberResponded();
         int totalInvites = event.getInvitedHaveResponded().size();
-        String respondedText = numResponded + " / " + totalInvites + " Responded";
+        String respondedText = "Nobody invited";
+        if (totalInvites > 1)
+        {
+            if (numResponded == totalInvites) {
+                respondedText = "Everyone has responded";
+            }
+            else {
+                respondedText = (numResponded - 1) + " out of " + (totalInvites - 1) + " people have responded";
+            }
+        }
         numRespondedView.setText(respondedText);
 
         // Set up the edit icon
