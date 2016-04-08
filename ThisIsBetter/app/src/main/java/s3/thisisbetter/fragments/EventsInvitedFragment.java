@@ -122,7 +122,7 @@ public class EventsInvitedFragment extends Fragment {
 
         @Override
         public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-            Event e = dataSnapshot.getValue(Event.class);
+            final Event e = dataSnapshot.getValue(Event.class);
 
             // The invited tab doesn't show any events you own
             String ownerID = e.getOwnerID();
@@ -133,8 +133,18 @@ public class EventsInvitedFragment extends Fragment {
                 // we are no longer invited to this event
                 adapter.deleteEvent(dataSnapshot.getKey());
             } else {
-                // the event we're invited to has changed
-                adapter.editEvent(e, dataSnapshot.getKey());
+                Firebase ownerEmailRef = DB.getUsersRef().child(ownerID).child(User.EMAIL_KEY);
+                ownerEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        String ownerEmail = (String) dataSnapshot.getValue();
+                        // the event we're invited to has changed
+                        adapter.editEvent(e, dataSnapshot.getKey(), ownerEmail);
+                    }
+
+                    @Override
+                    public void onCancelled(FirebaseError firebaseError) { }
+                });
             }
         }
 

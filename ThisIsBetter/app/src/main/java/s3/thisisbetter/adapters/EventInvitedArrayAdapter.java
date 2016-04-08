@@ -121,11 +121,13 @@ public class EventInvitedArrayAdapter extends ArrayAdapter<EventListItem> {
     }
 
     public void addEvent(Event e, String eventID, String ownerEmail) {
-        insertEvent(e, eventID);
         uidToEmail.put(e.getOwnerID(), ownerEmail);
+        insertEvent(e, eventID);
     }
 
-    public void editEvent(Event e, String eventID) {
+    public void editEvent(Event e, String eventID, String ownerEmail) {
+        uidToEmail.put(e.getOwnerID(), ownerEmail);
+
         Event oldEventObject = eventIDToObject.get(eventID);
         if(oldEventObject != null) {
             this.remove(oldEventObject);
