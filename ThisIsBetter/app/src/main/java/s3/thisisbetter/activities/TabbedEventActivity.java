@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.PopupMenu;
 
+import com.firebase.client.AuthData;
 import com.firebase.client.ChildEventListener;
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -53,6 +54,22 @@ public class TabbedEventActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        DB.getFirebaseRef().addAuthStateListener(new Firebase.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(AuthData authData) {
+                if (authData == null) {
+                    Intent intent = new Intent(TabbedEventActivity.this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Removes other activities from the stack
+                    startActivity(intent);
+                } else {
+                    onCreate();
+                }
+            }
+        });
+    }
+
+    private void onCreate() {
         setContentView(R.layout.activity_tabbed_event);
 
         // Create the adapter that will return a fragment for each of the three
@@ -127,9 +144,6 @@ public class TabbedEventActivity extends AppCompatActivity {
                         Firebase ref = DB.getFirebaseRef();
                         ref.unauth();
 
-                        Intent intent = new Intent(TabbedEventActivity.this, LoginActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Removes other activities from the stack
-                        startActivity(intent);
                         return true;
                 }
                 return false;
