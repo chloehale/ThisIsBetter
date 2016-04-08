@@ -55,19 +55,23 @@ public class TabbedEventActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        DB.getFirebaseRef().addAuthStateListener(new Firebase.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(AuthData authData) {
-                if (authData == null) {
-                    Intent intent = new Intent(TabbedEventActivity.this, LoginActivity.class);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Removes other activities from the stack
-                    startActivity(intent);
-                } else {
-                    onCreate();
-                }
-            }
-        });
+        DB.getFirebaseRef().addAuthStateListener(authListener);
     }
+
+    private Firebase.AuthStateListener authListener = new Firebase.AuthStateListener() {
+        @Override
+        public void onAuthStateChanged(AuthData authData) {
+            if (authData == null) {
+                DB.getFirebaseRef().removeAuthStateListener(authListener);
+
+                Intent intent = new Intent(TabbedEventActivity.this, LoginActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK); // Removes other activities from the stack
+                startActivity(intent);
+            } else {
+                onCreate();
+            }
+        }
+    };
 
     private void onCreate() {
         setContentView(R.layout.activity_tabbed_event);
