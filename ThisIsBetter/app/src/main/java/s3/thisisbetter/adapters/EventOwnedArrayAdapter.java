@@ -90,7 +90,12 @@ public class EventOwnedArrayAdapter extends ArrayAdapter<EventListItem> {
                     respondedText = "";
                 }
                 else {
-                    respondedText = (numResponded - 1) + " out of " + (totalInvites - 1) + " people have responded";
+//                    respondedText = (numResponded - 1) + " out of " + (totalInvites - 1) + " people have responded";
+                    int waitingCount = totalInvites - numResponded;
+                    if (waitingCount == 1)
+                        respondedText = "Waiting for " + waitingCount + " person to respond";
+                    else
+                        respondedText = "Waiting for " + waitingCount + " people to respond";
                 }
             }
             numRespondedView.setText(respondedText);

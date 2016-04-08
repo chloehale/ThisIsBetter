@@ -227,9 +227,9 @@ public class ViewResponseActivity extends AppCompatActivity {
             subStatusText.setVisibility(View.GONE);
             int waitingCount = totalCount - respondedCount;
             if (waitingCount == 1)
-                responseStatusTitle.setText("Waiting for " + waitingCount + " more to respond");
+                responseStatusTitle.setText("Waiting for " + waitingCount + " person to respond");
             else
-                responseStatusTitle.setText("Waiting for " + waitingCount + " others to respond");
+                responseStatusTitle.setText("Waiting for " + waitingCount + " people to respond");
         }
     }
 
@@ -252,7 +252,7 @@ public class ViewResponseActivity extends AppCompatActivity {
                 responseRatio.setText("All of you are available");
             }
             else {
-                responseRatio.setText(entry.getKey() + " out of " + totalInvitedCount + " people available");
+                responseRatio.setText(entry.getKey() + " out of " + totalInvitedCount + " event members available");
             }
 
             responseRatio.setTextColor(this.getResources().getColor(R.color.colorGrayDark));
