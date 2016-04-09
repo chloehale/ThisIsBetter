@@ -46,12 +46,11 @@ public class InviteArrayAdapter extends ArrayAdapter<String> {
         datesWithEventIDQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot date : dataSnapshot.getChildren()) {
+                for (DataSnapshot date : dataSnapshot.getChildren()) {
                     Firebase dateRef = DB.getDatesRef().child(date.getKey());
                     //Query datesWithEventIDQuery = dateRef.child("availability");
 
-                    for (DataSnapshot timeBlock : date.child("availability").getChildren())
-                    {
+                    for (DataSnapshot timeBlock : date.child("availability").getChildren()) {
                         for (DataSnapshot userInvited : timeBlock.getChildren()) {
                             if (userInvited.getKey() == userID) {
                                 Firebase invitedUserRef = dateRef.child("availability").child(timeBlock.getKey()).child(userInvited.getKey());
@@ -63,7 +62,8 @@ public class InviteArrayAdapter extends ArrayAdapter<String> {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) { }
+            public void onCancelled(FirebaseError firebaseError) {
+            }
         });
     }
 
@@ -103,19 +103,18 @@ public class InviteArrayAdapter extends ArrayAdapter<String> {
         invitedUsersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(final DataSnapshot invitedData : dataSnapshot.getChildren()) {
+                for (final DataSnapshot invitedData : dataSnapshot.getChildren()) {
                     final String invitedUserID = invitedData.getKey();
 
                     Query allUsersQuery = DB.getUsersRef();
                     allUsersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            for(DataSnapshot userData : dataSnapshot.getChildren()) {
-                                String emailUser = (String)userData.child("email").getValue();
+                            for (DataSnapshot userData : dataSnapshot.getChildren()) {
+                                String emailUser = (String) userData.child("email").getValue();
                                 String invitedUserIDClicked = userData.getKey();
 
-                                if (email.equals(emailUser))
-                                {
+                                if (email.equals(emailUser)) {
                                     if (invitedUserID == invitedUserIDClicked) {
                                         Firebase invitedUserRef = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY).child(invitedUserID);
                                         boolean hasRespondedAlready = (boolean) invitedData.getValue();
@@ -130,13 +129,15 @@ public class InviteArrayAdapter extends ArrayAdapter<String> {
                         }
 
                         @Override
-                        public void onCancelled(FirebaseError firebaseError) { }
+                        public void onCancelled(FirebaseError firebaseError) {
+                        }
                     });
                 }
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) { }
+            public void onCancelled(FirebaseError firebaseError) {
+            }
         });
     }
 
@@ -167,6 +168,9 @@ public class InviteArrayAdapter extends ArrayAdapter<String> {
 
     public void addEmail(String e) {
         if(e.equals(ownerEmail)) {
+            // make sure we're not adding it twice
+            if(this.getCount() > 0 && this.getItem(0).equals(ownerEmail)) { return; }
+
             this.insert(ownerEmail, 0);
         } else {
             this.insert(e, this.getCount());
