@@ -50,6 +50,10 @@ public class ViewResponseActivity extends AppCompatActivity {
     private int totalInvitedCount;
     private Firebase queryRef;
     private ValueEventListener eventListener;
+    private Firebase datesQueryRef;
+    private ValueEventListener datesValueListener = null;
+
+    private boolean eventExists = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,7 +86,7 @@ public class ViewResponseActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        queryRef.removeEventListener(eventListener);
+        unattachListeners();
     }
 
 
@@ -97,12 +101,19 @@ public class ViewResponseActivity extends AppCompatActivity {
     }
 
 
+    private void unattachListeners() {
+        queryRef.removeEventListener(eventListener);
+        datesQueryRef.removeEventListener(datesValueListener);
+        datesValueListener = null;
+    }
+
     private void getEventData() {
         eventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot snapshot) {
                 Event event = snapshot.getValue(Event.class);
                 if(event == null) {
+                    eventExists = false;
                     // the event just got deleted
                     int duration = Toast.LENGTH_LONG;
                     String message = "Sorry, the event you were viewing just got deleted.";
@@ -111,6 +122,7 @@ public class ViewResponseActivity extends AppCompatActivity {
 
                     finish();
                 } else {
+                    eventExists = true;
                     setTitleText(event);
                     setResponseStatusText(event);
                     getAvailabilityData(event);
@@ -126,7 +138,7 @@ public class ViewResponseActivity extends AppCompatActivity {
     }
 
 
-    private void getAvailabilityData(Event event) {
+    private void getAvailabilityData(final Event event) {
 
         totalInvitedCount = event.getInvitedHaveResponded().size();
         final Set<String> DATE_IDs = event.getProposedDateIDs().keySet();
@@ -144,10 +156,11 @@ public class ViewResponseActivity extends AppCompatActivity {
         }
 
         //query for dates and build availability blocks
-        if (totalInvitedCount > 1) {
-            ValueEventListener datesValueListener = new ValueEventListener() {
+        if (totalInvitedCount > 1 && datesValueListener == null) {
+            datesValueListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    if(!eventExists) { return; }
 
                     //reset and clear out all views
                     availabilityBlocks = new TreeMap<>(Collections.reverseOrder());
@@ -185,8 +198,8 @@ public class ViewResponseActivity extends AppCompatActivity {
                 public void onCancelled(FirebaseError firebaseError) {}
             };
 
-            Firebase datesQueryRef = DB.getDatesRef();
-            datesQueryRef.addListenerForSingleValueEvent(datesValueListener);
+            datesQueryRef = DB.getDatesRef();
+            datesQueryRef.addValueEventListener(datesValueListener);
         }
     }
 
