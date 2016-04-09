@@ -47,6 +47,15 @@ public class Event implements EventListItem {
         return invitedHaveResponded;
     }
 
+    public boolean setInviteeResponseTo(boolean value, String key) {
+        if(invitedHaveResponded.containsKey(key)) {
+            invitedHaveResponded.put(key, value);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public Map<String, Boolean> getProposedDateIDs() {
         return proposedDateIDs;
     }

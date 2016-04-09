@@ -1,6 +1,5 @@
 package s3.thisisbetter.activities;
 
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Build;
 import android.support.v4.app.FragmentManager;
@@ -8,28 +7,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
 import com.firebase.client.FirebaseError;
-import com.firebase.client.Query;
 import com.firebase.client.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -38,7 +33,6 @@ import java.util.TreeSet;
 
 import s3.thisisbetter.AppConstants;
 import s3.thisisbetter.R;
-import s3.thisisbetter.adapters.EventOwnedArrayAdapter;
 import s3.thisisbetter.adapters.ViewResponseArrayAdapter;
 import s3.thisisbetter.comparators.AvailabilityBlockComparator;
 import s3.thisisbetter.dialogs.ViewResponseDialog;
@@ -50,12 +44,12 @@ import s3.thisisbetter.model.TimeBlock;
 
 public class ViewResponseActivity extends AppCompatActivity {
 
-    private String parentType;
     private String eventID;
     private Toolbar toolbar;
     private Map<Integer, List<AvailabilityBlock>> availabilityBlocks;
     private int totalInvitedCount;
     private Firebase queryRef;
+    private ValueEventListener eventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +66,6 @@ public class ViewResponseActivity extends AppCompatActivity {
 
         // Get the data
         Intent intent = getIntent();
-        parentType = intent.getStringExtra(AppConstants.EXTRA_PARENT_TYPE);
         eventID = intent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
         getEventData();
 
@@ -83,6 +76,7 @@ public class ViewResponseActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
     }
+
 
     @Override
     protected void onStop() {
@@ -102,25 +96,35 @@ public class ViewResponseActivity extends AppCompatActivity {
         });
     }
 
+
     private void getEventData() {
+        eventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot snapshot) {
+                Event event = snapshot.getValue(Event.class);
+                if(event == null) {
+                    // the event just got deleted
+                    int duration = Toast.LENGTH_LONG;
+                    String message = "Sorry, the event you were viewing just got deleted.";
+                    Toast.makeText(getApplicationContext(), message, duration)
+                            .show();
+
+                    finish();
+                } else {
+                    setTitleText(event);
+                    setResponseStatusText(event);
+                    getAvailabilityData(event);
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {}
+        };
+
         queryRef = DB.getEventsRef().child(eventID);
         queryRef.addValueEventListener(eventListener);
     }
 
-    private ValueEventListener eventListener = new ValueEventListener() {
-        @Override
-        public void onDataChange(DataSnapshot snapshot) {
-            Event event = snapshot.getValue(Event.class);
-            setTitleText(event);
-            setResponseStatusText(event);
-            getAvailabilityData(event);
-        }
-
-        @Override
-        public void onCancelled(FirebaseError firebaseError) {
-            System.out.println("Failed to read event: " + firebaseError.getMessage());
-        }
-    };
 
     private void getAvailabilityData(Event event) {
 
@@ -141,9 +145,7 @@ public class ViewResponseActivity extends AppCompatActivity {
 
         //query for dates and build availability blocks
         if (totalInvitedCount > 1) {
-
-            Query queryRef = DB.getDatesRef();
-            queryRef.addValueEventListener(new ValueEventListener() {
+            ValueEventListener datesValueListener = new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
 
@@ -165,7 +167,7 @@ public class ViewResponseActivity extends AppCompatActivity {
                             calendar.set(timeBlock.getYear(), timeBlock.getMonth(), timeBlock.getDay());
 
                             AvailabilityBlock availabilityBlock = new AvailabilityBlock(totalInvitedCount, calendar, timeBlock.getMonthString(), entry.getKey(),
-                                                                                        availableUserIds, respondedUserIds, notRespondedUserIds);
+                                    availableUserIds, respondedUserIds, notRespondedUserIds);
 
                             if (availabilityBlocks.get(availableUserIds.size()) != null) {
                                 availabilityBlocks.get(availableUserIds.size()).add(availabilityBlock);
@@ -180,10 +182,11 @@ public class ViewResponseActivity extends AppCompatActivity {
                 }
 
                 @Override
-                public void onCancelled(FirebaseError firebaseError) {
+                public void onCancelled(FirebaseError firebaseError) {}
+            };
 
-                }
-            });
+            Firebase datesQueryRef = DB.getDatesRef();
+            datesQueryRef.addListenerForSingleValueEvent(datesValueListener);
         }
     }
 
@@ -192,6 +195,7 @@ public class ViewResponseActivity extends AppCompatActivity {
         TextView title = (TextView) findViewById(R.id.title_text_view);
         title.setText("Responses for \"" + event.getTitle() + "\"");
     }
+
 
     private void setResponseStatusText(Event event) {
         int respondedCount = 0;
@@ -317,13 +321,10 @@ public class ViewResponseActivity extends AppCompatActivity {
         });
     }
 
+
     private void createDialog(AvailabilityBlock availabilityBlock) {
         FragmentManager fm = getSupportFragmentManager();
         ViewResponseDialog overlay = ViewResponseDialog.newInstance(availabilityBlock);
-
-
-
-
 
         overlay.show(fm, "FragmentDialog");
     }

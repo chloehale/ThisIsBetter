@@ -19,6 +19,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -100,7 +101,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(!isUserEverAvailable()) {
+                if (!isUserEverAvailable()) {
                     showConfirmationDialog();
                 } else {
                     saveTapped();
@@ -295,7 +296,7 @@ public class AvailabilityInputActivity extends AppCompatActivity {
             intent.putExtra(AppConstants.EXTRA_EVENT_ID, eventID);
             startActivity(intent);
         } else {
-            saveUserAvailability();
+            updateAvailabilityForEvent();
             finish();
         }
     }
@@ -329,19 +330,58 @@ public class AvailabilityInputActivity extends AppCompatActivity {
         event.addProposedDateIDs(dateIDs);
     }
 
-    private void saveUserAvailability() {
+    private void updateAvailabilityForEvent() {
         Intent prevIntent = getIntent();
-        String eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
-        Query eventDatesQuery = DB.getDatesRef().orderByChild(TimeBlock.EVENT_ID_KEY).equalTo(eventID);
+        final String eventID = prevIntent.getStringExtra(AppConstants.EXTRA_EVENT_ID);
+        final String myUID = DB.getMyUID();
 
+        final Firebase eventRef = DB.getEventsRef().child(eventID);
+        eventRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Event e = dataSnapshot.getValue(Event.class);
+
+                if(e == null) {
+                    // the event just got deleted
+                    int duration = Toast.LENGTH_LONG;
+                    String message = "Sorry, the event you were responding to was deleted.";
+                    Toast.makeText(getApplicationContext(), message, duration)
+                            .show();
+                    return;
+                }
+
+                // Check that we're still invited to this event, and set the invitedHaveResponded
+                // for this user to TRUE
+                if(e.setInviteeResponseTo(true, myUID)) {
+                    // if we're able to successfully update the invitedHaveResponded for the event,
+                    // then we're still invited to the event and should continue on!
+                    eventRef.setValue(e);
+                    saveUserAvailabilityForEachDate(eventID);
+                } else {
+                    // the user just got un-invited from the event
+                    int duration = Toast.LENGTH_LONG;
+                    String message = "Sorry, you were uninvited from the event you were responding to.";
+                    Toast.makeText(getApplicationContext(), message, duration)
+                            .show();
+                    return;
+                }
+            }
+
+            @Override
+            public void onCancelled(FirebaseError firebaseError) {}
+        });
+    }
+
+    private void saveUserAvailabilityForEachDate(String eventID) {
+        Query eventDatesQuery = DB.getDatesRef().orderByChild(TimeBlock.EVENT_ID_KEY).equalTo(eventID);
         eventDatesQuery.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot dateData : dataSnapshot.getChildren()) {
+                for (DataSnapshot dateData : dataSnapshot.getChildren()) {
                     TimeBlock date = dateData.getValue(TimeBlock.class);
 
-                    for(TimeBlock updatedDate : dates) {
-                        if(updatedDate.getDay() == date.getDay() &&
+                    for (TimeBlock updatedDate : dates) {
+                        if (updatedDate.getDay() == date.getDay() &&
                                 updatedDate.getMonth() == date.getMonth() &&
                                 updatedDate.getYear() == date.getYear()) {
 
@@ -354,12 +394,9 @@ public class AvailabilityInputActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCancelled(FirebaseError firebaseError) { }
+            public void onCancelled(FirebaseError firebaseError) {
+            }
         });
-
-        String uid = DB.getMyUID();
-        Firebase eventsRef = DB.getEventsRef().child(eventID).child(Event.INVITED_KEY).child(uid);
-        eventsRef.setValue(true);
     }
 
 }
