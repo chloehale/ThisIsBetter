@@ -129,9 +129,11 @@ public class EventsInvitedFragment extends Fragment {
             String myUID = DB.getMyUID();
             if(ownerID.equals(myUID)) { return; }
 
+            final String eventID = dataSnapshot.getKey();
+
             if(!e.getInvitedHaveResponded().containsKey(myUID)) {
                 // we are no longer invited to this event
-                adapter.deleteEvent(dataSnapshot.getKey());
+                adapter.deleteEvent(eventID);
             } else {
                 Firebase ownerEmailRef = DB.getUsersRef().child(ownerID).child(User.EMAIL_KEY);
                 ownerEmailRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -139,7 +141,7 @@ public class EventsInvitedFragment extends Fragment {
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         String ownerEmail = (String) dataSnapshot.getValue();
                         // the event we're invited to has changed
-                        adapter.editEvent(e, dataSnapshot.getKey(), ownerEmail);
+                        adapter.editEvent(e, eventID, ownerEmail);
                     }
 
                     @Override
