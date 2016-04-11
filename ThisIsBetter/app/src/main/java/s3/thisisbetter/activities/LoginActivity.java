@@ -47,8 +47,8 @@ public class LoginActivity extends AppCompatActivity {
         mPasswordView = (EditText) findViewById(R.id.password);
 
         // Fill in dummy credentials
-        mEmailView.setText("a@test.com");
-        mPasswordView.setText("a");
+//        mEmailView.setText("a@test.com");
+//        mPasswordView.setText("a");
 
         Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
